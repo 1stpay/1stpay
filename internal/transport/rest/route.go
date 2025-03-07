@@ -2,13 +2,17 @@ package transport
 
 import (
 	"github.com/1stpay/1stpay/internal/config"
-	"github.com/1stpay/1stpay/internal/transport/rest/frontend/route"
+	frontendRoute "github.com/1stpay/1stpay/internal/transport/rest/frontend/route"
+	integrationRoute "github.com/1stpay/1stpay/internal/transport/rest/integration/route"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func SetupRoutes(env *config.Env, db *gorm.DB, gin *gin.Engine) {
 	frontendGroup := gin.Group("/frontend")
-	route.SetupFrontendRoutes(env, db, frontendGroup)
+	frontendRoute.SetupFrontendRoutes(env, db, frontendGroup)
+
+	integrationGroup := gin.Group("/integration")
+	integrationRoute.SetupIntegrationRoutes(env, db, integrationGroup)
 
 }
