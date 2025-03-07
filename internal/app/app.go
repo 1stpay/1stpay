@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/1stpay/1stpay/internal/config"
-	"github.com/1stpay/1stpay/internal/transport/rest/route"
+	route "github.com/1stpay/1stpay/internal/transport/rest"
 )
 
 func Run() {
@@ -12,6 +12,6 @@ func Run() {
 	env := app.Env
 	db := app.Postgres
 	gin := gin.Default()
-	route.Setup(env, db, gin)
+	route.SetupRoutes(env, db, gin)
 	gin.Run(":" + env.HttpPort)
 }

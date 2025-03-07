@@ -8,6 +8,6 @@ type PingSuccess struct {
 }
 
 func Ping(c *gin.Context) {
-	responseData := PingSuccess{Status: 2000, Success: true}
+	responseData := PingSuccess{Status: 200, Success: true}
 	c.JSON(200, responseData)
 }
