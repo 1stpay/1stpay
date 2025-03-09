@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -14,11 +16,20 @@ type Env struct {
 	DBUser   string `mapstructure:"DB_USER"`
 	DBPass   string `mapstructure:"DB_PASS"`
 	DBName   string `mapstructure:"DB_NAME"`
+	DBUrl    string `mapstructure:"DB_URL"`
 }
 
-func NewEnv() *Env {
+func NewEnv(envPath ...string) *Env {
+	var configFile string
+	if len(envPath) > 0 && envPath[0] != "" {
+		configFile = envPath[0]
+	} else {
+		configFile = ".env"
+	}
 	env := Env{}
-	viper.SetConfigFile(".env")
+	dir, _ := os.Getwd()
+	fmt.Println(dir)
+	viper.SetConfigFile(configFile)
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatal("Can't find the file .env : ", err)
