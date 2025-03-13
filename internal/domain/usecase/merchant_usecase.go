@@ -77,6 +77,7 @@ func (u *MerchantUsecase) CreateMerchantToken(merchantTokenData restdto.Merchant
 	merchantToken := model.MerchantToken{
 		MerchantID: merchantUUID,
 		TokenID:    merchantTokenData.TokenID,
+		IsActive:   merchantTokenData.Active,
 	}
 	merchantToken, err = u.MerchantRepo.CreateMerchantToken(merchantToken)
 	if err != nil {

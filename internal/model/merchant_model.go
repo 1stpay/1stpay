@@ -22,5 +22,7 @@ type MerchantToken struct {
 	Merchant   Merchant  `gorm:"foreignKey:MerchantID"`
 	TokenID    uuid.UUID `gorm:"type:uuid;not null"`
 	Token      Token     `gorm:"foreignKey:TokenID"`
+	Balance    float64   `gorm:"type:numeric(20,8);not null;default:0"`
+	IsActive   bool      `gorm:"not null;default:false"`
 	CreatedAt  time.Time `gorm:"not null;default:now()"`
 }
