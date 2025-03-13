@@ -48,7 +48,7 @@ CREATE TABLE merchant_tokens (
     merchant_id uuid NOT NULL REFERENCES merchants(id),
     token_id uuid NOT NULL REFERENCES tokens(id),
     is_active boolean NOT NULL DEFAULT false,
-    balance uuid numeric(20,8) NOT NULL DEFAULT 0,
+    balance numeric(20,8) NOT NULL DEFAULT 0,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
