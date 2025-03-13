@@ -8,11 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func SetupRoutes(env *config.Env, db *gorm.DB, gin *gin.Engine) {
+func SetupRoutes(env *config.Env, db *gorm.DB, gin *gin.Engine, deps *config.Dependencies) {
 	frontendGroup := gin.Group("/frontend")
-	frontendRoute.SetupFrontendRoutes(env, db, frontendGroup)
+	frontendRoute.SetupFrontendRoutes(env, db, frontendGroup, deps)
 
 	integrationGroup := gin.Group("/integration")
-	integrationRoute.SetupIntegrationRoutes(env, db, integrationGroup)
+	integrationRoute.SetupIntegrationRoutes(env, db, integrationGroup, deps)
 
 }

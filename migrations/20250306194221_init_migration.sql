@@ -43,13 +43,6 @@ CREATE TABLE merchants (
     commission_rate numeric(5,2) NOT NULL DEFAULT 0
 );
 
-CREATE TABLE merchant_blockchains (
-    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    merchant_id uuid NOT NULL REFERENCES merchants(id),
-    blockchain_id uuid NOT NULL REFERENCES blockchains(id),
-    created_at timestamptz NOT NULL DEFAULT now()
-);
-
 CREATE TABLE merchant_tokens (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     merchant_id uuid NOT NULL REFERENCES merchants(id),

@@ -7,11 +7,16 @@ import (
 type Application struct {
 	Env      *Env
 	Postgres *gorm.DB
+	Deps     *Dependencies
 }
 
-func App() Application {
-	app := &Application{}
-	app.Env = NewEnv()
-	app.Postgres = NewPostgresDatabase(app.Env)
-	return *app
+func App() *Application {
+	env := NewEnv()
+	db := NewPostgresDatabase(env)
+	deps := NewDependencies(db, env)
+	return &Application{
+		Env:      env,
+		Postgres: db,
+		Deps:     deps,
+	}
 }

@@ -19,6 +19,8 @@ type IntegrationTest struct {
 	Env         *config.Env
 	GinEngine   *gin.Engine
 	TestFactory *factory.TestFactory
+	Repos       *config.Repos
+	Usecases    *config.Usecases
 }
 
 func NewIntegrationTest(t *testing.T, rootPath string) *IntegrationTest {
@@ -31,18 +33,21 @@ func NewIntegrationTest(t *testing.T, rootPath string) *IntegrationTest {
 	}
 	ginEngine := gin.Default()
 	gin.SetMode(gin.TestMode)
-	route.SetupRoutes(env, database.GormDB, ginEngine)
+	deps := config.NewDependencies(database.GormDB, env)
+	route.SetupRoutes(env, database.GormDB, ginEngine, deps)
 	t.Cleanup(func() {
 		if err := database.Cleanup(ctx); err != nil {
 			t.Fatalf("Error during test DB cleanup: %v", err)
 		}
 	})
+	testFactory := factory.NewTestFactory(database.GormDB, deps)
 
 	return &IntegrationTest{
 		Database:    database,
 		Context:     ctx,
 		Env:         env,
 		GinEngine:   ginEngine,
-		TestFactory: factory.NewTestFactory(database.GormDB),
+		TestFactory: testFactory,
+		Repos:       deps.Repos,
 	}
 }

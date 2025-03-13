@@ -5,13 +5,14 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/1stpay/1stpay/internal/domain/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
 
 const ContextUserKey = "user"
 
-func JWTAuthMiddleware(jwtSecret string) gin.HandlerFunc {
+func JWTAuthMiddleware(jwtSecret string, userUsecase usecase.UserUsecaseInterface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -43,8 +44,18 @@ func JWTAuthMiddleware(jwtSecret string) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 			return
 		}
+		userId, ok := claims["user_id"].(string)
+		if !ok || userId == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			return
+		}
+		user, err := userUsecase.GetById(userId)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			return
+		}
 
-		c.Set(ContextUserKey, claims)
+		c.Set(ContextUserKey, user)
 		c.Next()
 	}
 }

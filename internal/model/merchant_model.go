@@ -16,15 +16,6 @@ type Merchant struct {
 	CommissionRate float64   `gorm:"type:numeric(5,2);not null;default:0"`
 }
 
-type MerchantBlockchain struct {
-	ID           uuid.UUID  `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
-	MerchantID   uuid.UUID  `gorm:"type:uuid;not null"`
-	Merchant     Merchant   `gorm:"foreignKey:MerchantID"`
-	BlockchainID uuid.UUID  `gorm:"type:uuid;not null"`
-	Blockchain   Blockchain `gorm:"foreignKey:BlockchainID"`
-	CreatedAt    time.Time  `gorm:"not null;default:now()"`
-}
-
 type MerchantToken struct {
 	ID         uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
 	MerchantID uuid.UUID `gorm:"type:uuid;not null"`

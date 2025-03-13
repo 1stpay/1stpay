@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func SetupIntegrationRoutes(env *config.Env, db *gorm.DB, group *gin.RouterGroup) {
+func SetupIntegrationRoutes(env *config.Env, db *gorm.DB, group *gin.RouterGroup, deps *config.Dependencies) {
 	publicRouter := group.Group("/api/v1")
 	NewPaymentRouter(env, publicRouter)
 }

@@ -12,7 +12,7 @@ import (
 func TestAuthorizedUserAccess(t *testing.T) {
 	testConfig := test.NewIntegrationTest(t, "../../../../../")
 	router := testConfig.GinEngine
-	user, accessToken := testConfig.TestFactory.UserFactory.CreateUser()
+	user, accessToken := testConfig.TestFactory.CreateUser()
 
 	userReponse := test.PerformRequest(router, http.MethodGet, "/frontend/api/v1/user/me/", nil, accessToken)
 

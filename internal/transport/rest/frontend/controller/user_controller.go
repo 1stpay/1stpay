@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
+	"github.com/1stpay/1stpay/internal/model"
+	"github.com/1stpay/1stpay/internal/transport/rest/frontend/middleware"
 	restdto "github.com/1stpay/1stpay/internal/transport/rest/frontend/rest_dto"
 	"github.com/gin-gonic/gin"
 )
@@ -23,9 +25,15 @@ func NewUserController(userUsecase usecase.UserUsecaseInterface) *UserController
 }
 
 func (uc *UserController) GetProfile(c *gin.Context) {
-	user, err := uc.UserUsecase.GetUserFromContext(c)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Invalid user data in context"})
+	userData, exists := c.Get(middleware.ContextUserKey)
+
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user"})
+		return
+	}
+	user, ok := userData.(model.User)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user type"})
 		return
 	}
 

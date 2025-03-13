@@ -9,14 +9,15 @@ import (
 )
 
 type Env struct {
-	AppEnv   string `mapstructure:"APP_ENV"`
-	HttpPort string `mapstructure:"HTTP_PORT"`
-	DBHost   string `mapstructure:"DB_HOST"`
-	DBPort   string `mapstructure:"DB_PORT"`
-	DBUser   string `mapstructure:"DB_USER"`
-	DBPass   string `mapstructure:"DB_PASS"`
-	DBName   string `mapstructure:"DB_NAME"`
-	DBUrl    string `mapstructure:"DB_URL"`
+	AppEnv    string `mapstructure:"APP_ENV"`
+	HttpPort  string `mapstructure:"HTTP_PORT"`
+	DBHost    string `mapstructure:"DB_HOST"`
+	DBPort    string `mapstructure:"DB_PORT"`
+	DBUser    string `mapstructure:"DB_USER"`
+	DBPass    string `mapstructure:"DB_PASS"`
+	DBName    string `mapstructure:"DB_NAME"`
+	DBUrl     string `mapstructure:"DB_URL"`
+	JwtSecret string `mapstructure:"JWT_SECRET"`
 }
 
 func NewEnv(envPath ...string) *Env {
