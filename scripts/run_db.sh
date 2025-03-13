@@ -1,0 +1,1 @@
+docker run --rm --name test_db2 -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data postgres:16.2
