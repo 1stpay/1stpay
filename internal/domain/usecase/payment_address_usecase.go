@@ -1,4 +1,4 @@
-package service
+package usecase
 
 import (
 	"time"
@@ -8,26 +8,21 @@ import (
 	"github.com/google/uuid"
 )
 
-// PaymentAddressServiceInterface описывает интерфейс сервиса по генерации адресов платежа
-type PaymentAddressServiceInterface interface {
+type PaymentAddressUsecaseInterface interface {
 	GenerateAddresses(payment model.Payment, tokens []model.MerchantToken) ([]model.PaymentAddress, error)
 }
 
-// PaymentAddressService реализует логику генерации кошельков для платежа
-type PaymentAddressService struct {
+type PaymentAddressUsecase struct {
 	PaymentAddressRepo repository.PaymentAddressRepositoryInterface
 }
 
-// NewPaymentAddressService создаёт новый экземпляр PaymentAddressService
-func NewPaymentAddressService(repo repository.PaymentAddressRepositoryInterface) *PaymentAddressService {
-	return &PaymentAddressService{
+func NewPaymentAddressUsecase(repo repository.PaymentAddressRepositoryInterface) *PaymentAddressUsecase {
+	return &PaymentAddressUsecase{
 		PaymentAddressRepo: repo,
 	}
 }
 
-// GenerateAddresses генерирует для платежа кошельки для каждого активного токена мерчанта.
-// Здесь генерация ключей упрощена до демо-логики, но в реальном случае можно интегрироваться с блокчейн-сервисом.
-func (s *PaymentAddressService) GenerateAddresses(payment model.Payment, tokens []model.MerchantToken) ([]model.PaymentAddress, error) {
+func (s *PaymentAddressUsecase) GenerateAddresses(payment model.Payment, tokens []model.MerchantToken) ([]model.PaymentAddress, error) {
 	var addresses []model.PaymentAddress
 	now := time.Now()
 
@@ -49,7 +44,6 @@ func (s *PaymentAddressService) GenerateAddresses(payment model.Payment, tokens 
 			PaidAmountWei:      0,
 		}
 
-		// Сохраняем адрес через репозиторий
 		savedAddress, err := s.PaymentAddressRepo.Create(paymentAddress)
 		if err != nil {
 			return nil, err
