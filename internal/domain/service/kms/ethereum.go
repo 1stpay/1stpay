@@ -1,17 +1,36 @@
 package kms
 
-// EthereumProvider реализует WalletProvider для Ethereum.
+import (
+	"crypto/ecdsa"
+	"encoding/hex"
+
+	"github.com/ethereum/go-ethereum/crypto"
+)
+
 type EthereumProvider struct{}
 
 func (p EthereumProvider) Validate(address string) (bool, error) {
-	// Реализуйте валидацию для Ethereum-адреса
-	return true, nil // пример
+	return true, nil
 }
 
 func (p EthereumProvider) Create() (WalletData, error) {
-	// Реализуйте создание кошелька Ethereum
+	privateKey, err := crypto.GenerateKey()
+	if err != nil {
+		return WalletData{}, err
+	}
+
+	privateKeyBytes := crypto.FromECDSA(privateKey)
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		return WalletData{}, err
+	}
+
+	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
+	privateKeyString := hex.EncodeToString(privateKeyBytes)
+	privateKeyStringWithPrefix := "0x" + privateKeyString
 	return WalletData{
-		Address:    "0xExampleAddress",
-		PrivateKey: "ExamplePrivateKey",
+		Address:    address,
+		PrivateKey: privateKeyStringWithPrefix,
 	}, nil
 }
