@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
@@ -42,9 +41,8 @@ func (con *PaymentController) Create(c *gin.Context) {
 	}
 
 	payment, err := con.PaymentUsecase.CreatePaymentWithWallets(req, merchant.ID)
-	fmt.Println(err)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Err while payment create"})
 		return
 	}
 	c.JSON(http.StatusOK, frontend_dto.PaymentCreateResponseRestDTO{

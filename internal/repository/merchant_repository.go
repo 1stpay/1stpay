@@ -61,7 +61,9 @@ func (r *MerchantRepository) CreateMerchantToken(merchantToken model.MerchantTok
 
 func (r *MerchantRepository) ListMerchantToken(merchantId string, opts ...MerchantTokenOption) ([]model.MerchantToken, error) {
 	var tokenList []model.MerchantToken
-	dbQuery := r.db.Where("merchant_id = ?", merchantId)
+	dbQuery := r.db.Where("merchant_id = ?", merchantId).
+		Preload("Token").
+		Preload("Token.Blockchain")
 	for _, opt := range opts {
 		dbQuery = opt(dbQuery)
 	}
