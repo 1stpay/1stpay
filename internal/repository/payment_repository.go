@@ -28,7 +28,7 @@ func (r *PaymentRepository) Create(payment model.Payment) (model.Payment, error)
 }
 
 func (r *PaymentRepository) CreateTx(tx *gorm.DB, payment model.Payment) (model.Payment, error) {
-	if err := r.db.Create(&payment).Error; err != nil {
+	if err := tx.Create(&payment).Error; err != nil {
 		return model.Payment{}, err
 	}
 	return payment, nil
