@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"time"
 
 	"github.com/1stpay/1stpay/internal/domain/enum"
@@ -20,7 +21,16 @@ type PaymentUsecase struct {
 }
 
 type PaymentUsecaseInterface interface {
-	CreatePaymentWithWallets(paymentData restdto.InvoiceCreateRestDTO) (model.Payment, error)
+	CreatePaymentWithWallets(paymentData restdto.InvoiceCreateRestDTO, merchantId uuid.UUID) (model.Payment, error)
+}
+
+func NewPaymentUsecase(db *gorm.DB, paymentRepo repository.PaymentRepositoryInterface, paymentAddressRepo repository.PaymentAddressRepositoryInterface, merchantRepo repository.MerchantRepositoryInterface) *PaymentUsecase {
+	return &PaymentUsecase{
+		PaymentRepo:        paymentRepo,
+		PaymentAddressRepo: paymentAddressRepo,
+		MerchantRepo:       merchantRepo,
+		DB:                 db,
+	}
 }
 
 func (u *PaymentUsecase) CreatePaymentWithWallets(paymentData restdto.InvoiceCreateRestDTO, merchantId uuid.UUID) (model.Payment, error) {
@@ -52,6 +62,10 @@ func (u *PaymentUsecase) CreatePaymentWithWallets(paymentData restdto.InvoiceCre
 	}
 
 	merchantTokens, err := u.MerchantRepo.ListMerchantToken(merchantId.String())
+	if len(merchantTokens) == 0 {
+		tx.Rollback()
+		return model.Payment{}, errors.New("setup tokens you work with")
+	}
 	if err != nil {
 		tx.Rollback()
 		return model.Payment{}, err
@@ -72,7 +86,6 @@ func (u *PaymentUsecase) CreatePaymentWithWallets(paymentData restdto.InvoiceCre
 			return model.Payment{}, err
 		}
 
-		// Формируем запись PaymentAddress
 		paymentAddressList = append(paymentAddressList, model.PaymentAddress{
 			ID:         uuid.New(),
 			CreatedAt:  time.Now(),

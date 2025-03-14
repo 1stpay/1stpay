@@ -8,6 +8,7 @@ type Controllers struct {
 	FrontendMerchantController   *controller.MerchantController
 	FrontendBlockchainController *controller.BlockchainController
 	FrontendTokenController      *controller.TokenController
+	FrontendPaymentController    *controller.PaymentController
 }
 
 func NewControllers(usecases *Usecases) *Controllers {
@@ -16,11 +17,13 @@ func NewControllers(usecases *Usecases) *Controllers {
 	frontendBlockchainController := controller.NewBlockchainController(usecases.BlockchainUsecase)
 	frontendMerchantController := controller.NewMerchantController(usecases.MerchantUsecase, usecases.UserUsecase)
 	frontendTokenController := controller.NewTokenController(usecases.TokenUsecase)
+	frontendPaymentController := controller.NewPaymentController(usecases.PaymentUsecase, usecases.MerchantUsecase, usecases.UserUsecase)
 	return &Controllers{
 		FrontendAuthController:       frontendAuthController,
 		FrontendUserController:       frontendUserController,
 		FrontendMerchantController:   frontendMerchantController,
 		FrontendBlockchainController: frontendBlockchainController,
 		FrontendTokenController:      frontendTokenController,
+		FrontendPaymentController:    frontendPaymentController,
 	}
 }

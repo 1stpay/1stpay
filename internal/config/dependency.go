@@ -15,7 +15,7 @@ type Dependencies struct {
 func NewDependencies(db *gorm.DB, env *Env) *Dependencies {
 	repos := NewRepositories(db)
 
-	usecases := NewUsecases(repos)
+	usecases := NewUsecases(db, repos)
 
 	controllers := NewControllers(usecases)
 	mw := &Middleware{
