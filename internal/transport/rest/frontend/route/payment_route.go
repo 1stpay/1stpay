@@ -6,11 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewPaymentRouter(env *config.Env, group *gin.RouterGroup) {
+func NewPaymentRouter(env *config.Env, group *gin.RouterGroup, deps *config.Dependencies) {
 	rates := group.Group("/payments")
+	c := deps.Controllers.FrontendPaymentController
 	{
 		rates.GET("/", rest.Ping)
-		rates.POST("/", rest.Ping)
+		rates.POST("/", c.Create)
 		rates.GET("/:id/", rest.Ping)
 	}
 }

@@ -17,6 +17,6 @@ func SetupFrontendRoutes(env *config.Env, db *gorm.DB, group *gin.RouterGroup, d
 	NewAuthRouter(env, db, publicRouter, deps)
 	NewUserRouter(env, db, protectedRouter, deps)
 	NewMerchantRouter(env, db, protectedRouter, deps)
-	NewPaymentRouter(env, protectedRouter)
+	NewPaymentRouter(env, protectedRouter, deps)
 
 }
