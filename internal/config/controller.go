@@ -19,7 +19,7 @@ func NewControllers(usecases *Usecases) *Controllers {
 	merchantAuthController := controller.NewAuthController(usecases.AuthUsecase)
 	merchantUserController := controller.NewUserController(usecases.UserUsecase)
 	merchantBlockchainController := controller.NewBlockchainController(usecases.BlockchainUsecase)
-	merchantMerchantController := controller.NewMerchantController(usecases.MerchantUsecase, usecases.UserUsecase)
+	merchantMerchantController := controller.NewMerchantController(usecases.MerchantUsecase, usecases.MerchantAPIKeyUsecase, usecases.UserUsecase)
 	merchantTokenController := controller.NewTokenController(usecases.TokenUsecase)
 	merchantPaymentController := controller.NewPaymentController(usecases.PaymentUsecase, usecases.MerchantUsecase, usecases.UserUsecase)
 	frontedPaymentController := frontedController.NewPaymentController(usecases.PaymentUsecase)
