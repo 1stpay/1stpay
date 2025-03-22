@@ -13,15 +13,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type merchantAPIKeyUsecase struct {
+	repo repository.MerchantRepository
+}
+
 type MerchantAPIKeyUsecase interface {
 	CreateAPIKey(merchantID uuid.UUID, expiresAt *time.Time) (model.MerchantAPIKey, string, error)
 	ListAPIKeys(merchantID uuid.UUID) ([]model.MerchantAPIKey, error)
 	ValidateAPIKey(apiKey string) (model.Merchant, error)
 	DeactivateAPIKey(apiKeyID uuid.UUID) error
-}
-
-type merchantAPIKeyUsecase struct {
-	repo repository.MerchantRepository
 }
 
 func NewMerchantAPIKeyUsecase(repo repository.MerchantRepository) MerchantAPIKeyUsecase {

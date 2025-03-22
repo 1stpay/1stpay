@@ -5,7 +5,7 @@ import (
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
 	"github.com/1stpay/1stpay/internal/transport/rest/merchant/helpers"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
+	"github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )

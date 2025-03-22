@@ -10,10 +10,10 @@ import (
 )
 
 type BlockchainController struct {
-	BlockchainUsecase usecase.BlockchainUsecaseInterface
+	BlockchainUsecase usecase.BlockchainUsecase
 }
 
-func NewBlockchainController(usecase usecase.BlockchainUsecaseInterface) *BlockchainController {
+func NewBlockchainController(usecase usecase.BlockchainUsecase) *BlockchainController {
 	return &BlockchainController{
 		BlockchainUsecase: usecase,
 	}

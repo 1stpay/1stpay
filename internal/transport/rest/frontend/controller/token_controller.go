@@ -10,10 +10,10 @@ import (
 )
 
 type TokenController struct {
-	TokenUsecase usecase.TokenUsecaseInterface
+	TokenUsecase usecase.TokenUsecase
 }
 
-func NewTokenController(usecase usecase.TokenUsecaseInterface) *TokenController {
+func NewTokenController(usecase usecase.TokenUsecase) *TokenController {
 	return &TokenController{
 		TokenUsecase: usecase,
 	}

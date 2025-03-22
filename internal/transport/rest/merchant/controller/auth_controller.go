@@ -4,19 +4,15 @@ import (
 	"net/http"
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
+	"github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/gin-gonic/gin"
 )
 
 type AuthController struct {
-	AuthUsecase usecase.AuthUsecaseInterface
+	AuthUsecase usecase.AuthUsecase
 }
 
-type AuthControllerInterface interface {
-	Register(c *gin.Context)
-}
-
-func NewAuthController(authUsecase usecase.AuthUsecaseInterface) *AuthController {
+func NewAuthController(authUsecase usecase.AuthUsecase) *AuthController {
 	return &AuthController{
 		AuthUsecase: authUsecase,
 	}

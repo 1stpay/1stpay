@@ -6,11 +6,11 @@ import (
 )
 
 type Usecases struct {
-	AuthUsecase           usecase.AuthUsecaseInterface
+	AuthUsecase           usecase.AuthUsecase
 	UserUsecase           usecase.UserUsecase
 	MerchantUsecase       usecase.MerchantUsecase
-	BlockchainUsecase     usecase.BlockchainUsecaseInterface
-	TokenUsecase          usecase.TokenUsecaseInterface
+	BlockchainUsecase     usecase.BlockchainUsecase
+	TokenUsecase          usecase.TokenUsecase
 	PaymentUsecase        usecase.PaymentUsecase
 	MerchantAPIKeyUsecase usecase.MerchantAPIKeyUsecase
 }

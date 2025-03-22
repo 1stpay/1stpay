@@ -6,7 +6,7 @@ import (
 
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/repository"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
+	"github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/google/uuid"
 )
 

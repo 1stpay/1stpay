@@ -4,25 +4,26 @@ import (
 	"net/http"
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
+	"github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/gin-gonic/gin"
 )
 
-type AuthController struct {
-	AuthUsecase usecase.AuthUsecaseInterface
+type authController struct {
+	AuthUsecase usecase.AuthUsecase
 }
 
-type AuthControllerInterface interface {
+type AuthController interface {
 	Register(c *gin.Context)
+	Login(c *gin.Context)
 }
 
-func NewAuthController(authUsecase usecase.AuthUsecaseInterface) *AuthController {
-	return &AuthController{
+func NewAuthController(authUsecase usecase.AuthUsecase) AuthController {
+	return &authController{
 		AuthUsecase: authUsecase,
 	}
 }
 
-func (ac *AuthController) Register(c *gin.Context) {
+func (ac *authController) Register(c *gin.Context) {
 	var req restdto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверные входные данные"})
@@ -41,7 +42,7 @@ func (ac *AuthController) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, response)
 }
 
-func (ac *AuthController) Login(c *gin.Context) {
+func (ac *authController) Login(c *gin.Context) {
 	var req restdto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong input data"})

@@ -4,16 +4,16 @@ import (
 	"net/http"
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
+	"github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/gin-gonic/gin"
 	"github.com/guregu/null/v6"
 )
 
 type TokenController struct {
-	TokenUsecase usecase.TokenUsecaseInterface
+	TokenUsecase usecase.TokenUsecase
 }
 
-func NewTokenController(usecase usecase.TokenUsecaseInterface) *TokenController {
+func NewTokenController(usecase usecase.TokenUsecase) *TokenController {
 	return &TokenController{
 		TokenUsecase: usecase,
 	}

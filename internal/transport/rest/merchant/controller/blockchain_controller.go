@@ -4,16 +4,16 @@ import (
 	"net/http"
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
+	"github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/gin-gonic/gin"
 	"github.com/guregu/null/v6"
 )
 
 type BlockchainController struct {
-	BlockchainUsecase usecase.BlockchainUsecaseInterface
+	BlockchainUsecase usecase.BlockchainUsecase
 }
 
-func NewBlockchainController(usecase usecase.BlockchainUsecaseInterface) *BlockchainController {
+func NewBlockchainController(usecase usecase.BlockchainUsecase) *BlockchainController {
 	return &BlockchainController{
 		BlockchainUsecase: usecase,
 	}
