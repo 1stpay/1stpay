@@ -20,7 +20,7 @@ import (
 
 type PaymentUsecase struct {
 	PaymentRepo        repository.PaymentRepositoryInterface
-	PaymentAddressRepo repository.PaymentAddressRepositoryInterface
+	PaymentAddressRepo repository.PaymentAddressRepository
 	MerchantRepo       repository.MerchantRepository
 	PriceService       price_service.PriceService
 	DB                 *gorm.DB
@@ -34,7 +34,7 @@ type PaymentUsecaseInterface interface {
 func NewPaymentUsecase(
 	db *gorm.DB,
 	paymentRepo repository.PaymentRepositoryInterface,
-	paymentAddressRepo repository.PaymentAddressRepositoryInterface,
+	paymentAddressRepo repository.PaymentAddressRepository,
 	merchantRepo repository.MerchantRepository,
 	priceService price_service.PriceService,
 ) *PaymentUsecase {

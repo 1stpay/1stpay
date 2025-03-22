@@ -11,7 +11,7 @@ type Repos struct {
 	BlockchainRepo     repository.BlockchainRepository
 	TokenRepo          repository.TokenRepositoryInterface
 	PaymentRepo        repository.PaymentRepositoryInterface
-	PaymentAddressRepo repository.PaymentAddressRepositoryInterface
+	PaymentAddressRepo repository.PaymentAddressRepository
 }
 
 func NewRepositories(db *gorm.DB) *Repos {
