@@ -12,11 +12,11 @@ import (
 
 type PaymentController struct {
 	PaymentUsecase  usecase.PaymentUsecaseInterface
-	MerchantUsecase usecase.MerchantUsecaseInterface
+	MerchantUsecase usecase.MerchantUsecase
 	UserUsecase     usecase.UserUsecase
 }
 
-func NewPaymentController(paymentUsecase usecase.PaymentUsecaseInterface, merchantUsecase usecase.MerchantUsecaseInterface, userUsecase usecase.UserUsecase) *PaymentController {
+func NewPaymentController(paymentUsecase usecase.PaymentUsecaseInterface, merchantUsecase usecase.MerchantUsecase, userUsecase usecase.UserUsecase) *PaymentController {
 	return &PaymentController{
 		PaymentUsecase:  paymentUsecase,
 		MerchantUsecase: merchantUsecase,

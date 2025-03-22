@@ -10,11 +10,11 @@ import (
 )
 
 type MerchantController struct {
-	MerchantUsecase usecase.MerchantUsecaseInterface
+	MerchantUsecase usecase.MerchantUsecase
 	UserUsecase     usecase.UserUsecase
 }
 
-func NewMerchantController(merchantUsecase usecase.MerchantUsecaseInterface, userUsecase usecase.UserUsecase) *MerchantController {
+func NewMerchantController(merchantUsecase usecase.MerchantUsecase, userUsecase usecase.UserUsecase) *MerchantController {
 	return &MerchantController{
 		MerchantUsecase: merchantUsecase,
 		UserUsecase:     userUsecase,
