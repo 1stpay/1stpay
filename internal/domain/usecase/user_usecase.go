@@ -5,22 +5,22 @@ import (
 	"github.com/1stpay/1stpay/internal/repository"
 )
 
-type UserUsecase struct {
+type userUsecase struct {
 	UserRepo repository.UserRepositoryInterface
 }
 
-type UserUsecaseInterface interface {
+type UserUsecase interface {
 	GetById(id string) (model.User, error)
 	GetByEmail(email string) (model.User, error)
 }
 
-func NewUserUsecase(userRepo repository.UserRepositoryInterface) *UserUsecase {
-	return &UserUsecase{
+func NewUserUsecase(userRepo repository.UserRepositoryInterface) *userUsecase {
+	return &userUsecase{
 		UserRepo: userRepo,
 	}
 }
 
-func (u *UserUsecase) GetByEmail(email string) (model.User, error) {
+func (u *userUsecase) GetByEmail(email string) (model.User, error) {
 	user, err := u.UserRepo.GetByEmail(email)
 	if err != nil {
 		return model.User{}, err
@@ -28,7 +28,7 @@ func (u *UserUsecase) GetByEmail(email string) (model.User, error) {
 	return user, nil
 }
 
-func (u *UserUsecase) GetById(id string) (model.User, error) {
+func (u *userUsecase) GetById(id string) (model.User, error) {
 	user, err := u.UserRepo.GetById(id)
 	if err != nil {
 		return model.User{}, err

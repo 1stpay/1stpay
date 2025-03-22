@@ -6,7 +6,7 @@ import (
 )
 
 type TokenUsecase struct {
-	TokenRepo repository.TokenRepositoryInterface
+	TokenRepo repository.TokenRepository
 }
 
 type TokenUsecaseInterface interface {
@@ -14,7 +14,7 @@ type TokenUsecaseInterface interface {
 	Create(Token model.Token) (model.Token, error)
 }
 
-func NewTokenUsecase(repo repository.TokenRepositoryInterface) *TokenUsecase {
+func NewTokenUsecase(repo repository.TokenRepository) *TokenUsecase {
 	return &TokenUsecase{
 		TokenRepo: repo,
 	}

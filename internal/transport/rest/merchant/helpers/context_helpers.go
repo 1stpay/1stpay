@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetUserOrAbort(c *gin.Context, userUsecase usecase.UserUsecaseInterface) (model.User, bool) {
+func GetUserOrAbort(c *gin.Context, userUsecase usecase.UserUsecase) (model.User, bool) {
 	userData, exists := c.Get(middleware.ContextUserKey)
 	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user"})

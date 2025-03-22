@@ -7,7 +7,7 @@ import (
 
 type Usecases struct {
 	AuthUsecase       usecase.AuthUsecaseInterface
-	UserUsecase       usecase.UserUsecaseInterface
+	UserUsecase       usecase.UserUsecase
 	MerchantUsecase   usecase.MerchantUsecaseInterface
 	BlockchainUsecase usecase.BlockchainUsecaseInterface
 	TokenUsecase      usecase.TokenUsecaseInterface
