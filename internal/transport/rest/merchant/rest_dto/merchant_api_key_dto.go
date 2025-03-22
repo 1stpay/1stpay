@@ -18,3 +18,11 @@ type CreateAPIKeyResponseDTO struct {
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 	IsActive  bool       `json:"is_active"`
 }
+
+type MerchantAPIKeyResponseDTO struct {
+	ID        uuid.UUID  `json:"id"`
+	Name      string     `json:"name"`
+	CreatedAt time.Time  `json:"created_at"`
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	IsActive  bool       `json:"is_active"`
+}
