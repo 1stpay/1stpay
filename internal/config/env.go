@@ -18,6 +18,7 @@ type Env struct {
 	DBName    string `mapstructure:"DB_NAME"`
 	DBUrl     string `mapstructure:"DB_URL"`
 	JwtSecret string `mapstructure:"JWT_SECRET"`
+	RpcUrl    string `mapstructure:"RPC_URL"` // @TODO REMOVE
 }
 
 func NewEnv(envPath ...string) *Env {

@@ -1,6 +1,5 @@
 package enum
 
-// PaymentStatus – тип для статуса платежа
 type PaymentStatus string
 
 const (
@@ -10,7 +9,6 @@ const (
 	PaymentStatusNotFilled PaymentStatus = "not_filled"
 )
 
-// PaymentAMLStatus – тип для статуса AML проверки платежа
 type PaymentAMLStatus string
 
 const (

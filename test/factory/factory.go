@@ -6,7 +6,7 @@ import (
 	"github.com/1stpay/1stpay/internal/config"
 	"github.com/1stpay/1stpay/internal/domain/enum"
 	"github.com/1stpay/1stpay/internal/model"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/frontend/rest_dto"
+	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/rest_dto"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )

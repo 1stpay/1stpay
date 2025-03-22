@@ -47,6 +47,8 @@ CREATE TABLE merchant_tokens (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     merchant_id uuid NOT NULL REFERENCES merchants(id),
     token_id uuid NOT NULL REFERENCES tokens(id),
+    is_active boolean NOT NULL DEFAULT false,
+    balance numeric(20,8) NOT NULL DEFAULT 0,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -54,16 +56,12 @@ CREATE TABLE payments (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
-    token_id uuid NOT NULL REFERENCES tokens(id),
-    blockchain_id uuid NOT NULL REFERENCES blockchains(id),
     merchant_id uuid NOT NULL REFERENCES merchants(id),
+    used_token_id uuid REFERENCES tokens(id),
     requested_amount numeric(20,8) NOT NULL DEFAULT 0,
     paid_amount numeric(20,8) NOT NULL DEFAULT 0,
-    requested_amount_wei bigint NOT NULL DEFAULT 0,
-    paid_amount_wei bigint NOT NULL DEFAULT 0,
-    stable_amount numeric(20,8) NOT NULL,
     commission_amount numeric(20,8) NOT NULL DEFAULT 0,
-    expire_date timestamptz,
+    expires_at timestamptz,
     aml_status payment_aml_status,
     status payment_status NOT NULL DEFAULT 'pending',
     invoice_email text
@@ -74,8 +72,11 @@ CREATE TABLE payment_addresses (
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     payment_id uuid NOT NULL REFERENCES payments(id),
-    blockchain_id uuid NOT NULL REFERENCES blockchains(id),
     token_id uuid NOT NULL REFERENCES tokens(id),
+    requested_amount_wei bigint NOT NULL DEFAULT 0,
+    paid_amount_wei bigint NOT NULL DEFAULT 0,
+    requested_amount numeric(20,8) NOT NULL DEFAULT 0,
+    paid_amount numeric(20,8) NOT NULL DEFAULT 0,
     public_key text NOT NULL,
     private_key text NOT NULL
 );
