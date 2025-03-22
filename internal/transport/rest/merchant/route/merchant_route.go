@@ -15,5 +15,8 @@ func NewMerchantRouter(env *config.Env, db *gorm.DB, group *gin.RouterGroup, dep
 		rates.PUT("/me/", c.MerchantUpdate)
 		rates.GET("/me/tokens/", c.MerchantTokenList)
 		rates.POST("/me/tokens/", c.MerchantTokenCreate)
+		rates.POST("/me/api-key/", c.MerchantAPIKeyCreate)
+		rates.GET("/me/api-key/", c.MerchantAPIKeyList)
+		rates.POST("/me/api-key/:id/", c.MerchantAPIKeyDeactivate)
 	}
 }

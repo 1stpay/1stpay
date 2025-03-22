@@ -152,7 +152,7 @@ func (u *MerchantController) MerchantTokenCreate(c *gin.Context) {
 	})
 }
 
-func (u *MerchantController) CreateAPIKey(c *gin.Context) {
+func (u *MerchantController) MerchantAPIKeyCreate(c *gin.Context) {
 	var req restdto.CreateAPIKeyRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
@@ -188,7 +188,7 @@ func (u *MerchantController) CreateAPIKey(c *gin.Context) {
 	c.JSON(http.StatusCreated, response)
 }
 
-func (u *MerchantController) ListAPIKeys(c *gin.Context) {
+func (u *MerchantController) MerchantAPIKeyList(c *gin.Context) {
 	user, ok := helpers.GetUserOrAbort(c, u.UserUsecase)
 	if !ok {
 		return
@@ -220,7 +220,7 @@ func (u *MerchantController) ListAPIKeys(c *gin.Context) {
 	c.JSON(http.StatusOK, dtos)
 }
 
-func (u *MerchantController) DeactivateAPIKey(c *gin.Context) {
+func (u *MerchantController) MerchantAPIKeyDeactivate(c *gin.Context) {
 	keyIDStr := c.Param("id")
 	keyID, err := uuid.Parse(keyIDStr)
 	if err != nil {
