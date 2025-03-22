@@ -8,7 +8,7 @@ import (
 
 func NewTokenRouter(env *config.Env, db *gorm.DB, group *gin.RouterGroup, deps *config.Dependencies) {
 	rates := group.Group("/token")
-	c := deps.Controllers.FrontendTokenController
+	c := deps.Controllers.MerchantTokenController
 	{
 		rates.GET("/list/", c.ListActive)
 	}

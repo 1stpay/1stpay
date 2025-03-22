@@ -7,7 +7,7 @@ import (
 )
 
 func NewAuthRouter(env *config.Env, db *gorm.DB, group *gin.RouterGroup, deps *config.Dependencies) {
-	c := deps.Controllers.FrontendAuthController
+	c := deps.Controllers.MerchantAuthController
 	auth_group := group.Group("/auth")
 	{
 		auth_group.POST("/register/", c.Register)

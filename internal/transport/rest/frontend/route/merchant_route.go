@@ -8,7 +8,7 @@ import (
 
 func NewMerchantRouter(env *config.Env, db *gorm.DB, group *gin.RouterGroup, deps *config.Dependencies) {
 	rates := group.Group("/merchant")
-	c := deps.Controllers.FrontendMerchantController
+	c := deps.Controllers.MerchantMerchantController
 	{
 		rates.POST("/", c.MerchantCreate)
 		rates.GET("/me/", c.MerchantDetail)

@@ -8,7 +8,7 @@ import (
 
 func NewUserRouter(env *config.Env, db *gorm.DB, group *gin.RouterGroup, deps *config.Dependencies) {
 	user_group := group.Group("/user")
-	c := deps.Controllers.FrontendUserController
+	c := deps.Controllers.MerchantUserController
 	{
 		user_group.GET("/me/", c.GetProfile)
 	}
