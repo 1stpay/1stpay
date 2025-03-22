@@ -5,37 +5,37 @@ import (
 	"gorm.io/gorm"
 )
 
-type PaymentRepository struct {
+type paymentRepository struct {
 	db *gorm.DB
 }
 
-type PaymentRepositoryInterface interface {
+type PaymentRepository interface {
 	Create(payment model.Payment) (model.Payment, error)
 	CreateTx(tx *gorm.DB, payment model.Payment) (model.Payment, error)
 	GetPaymentWithAddresses(paymentID string) (model.Payment, []model.PaymentAddress, error)
 }
 
-func NewPaymentRepository(db *gorm.DB) *PaymentRepository {
-	return &PaymentRepository{
+func NewPaymentRepository(db *gorm.DB) PaymentRepository {
+	return &paymentRepository{
 		db: db,
 	}
 }
 
-func (r *PaymentRepository) Create(payment model.Payment) (model.Payment, error) {
+func (r *paymentRepository) Create(payment model.Payment) (model.Payment, error) {
 	if err := r.db.Create(&payment).Error; err != nil {
 		return model.Payment{}, err
 	}
 	return payment, nil
 }
 
-func (r *PaymentRepository) CreateTx(tx *gorm.DB, payment model.Payment) (model.Payment, error) {
+func (r *paymentRepository) CreateTx(tx *gorm.DB, payment model.Payment) (model.Payment, error) {
 	if err := tx.Create(&payment).Error; err != nil {
 		return model.Payment{}, err
 	}
 	return payment, nil
 }
 
-func (r *PaymentRepository) GetPaymentWithAddresses(paymentID string) (model.Payment, []model.PaymentAddress, error) {
+func (r *paymentRepository) GetPaymentWithAddresses(paymentID string) (model.Payment, []model.PaymentAddress, error) {
 	var payment model.Payment
 	var paymentAddressList []model.PaymentAddress
 

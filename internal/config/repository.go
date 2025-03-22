@@ -10,7 +10,7 @@ type Repos struct {
 	MerchantRepo       repository.MerchantRepository
 	BlockchainRepo     repository.BlockchainRepository
 	TokenRepo          repository.TokenRepositoryInterface
-	PaymentRepo        repository.PaymentRepositoryInterface
+	PaymentRepo        repository.PaymentRepository
 	PaymentAddressRepo repository.PaymentAddressRepository
 }
 

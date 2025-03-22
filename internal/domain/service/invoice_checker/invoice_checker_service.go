@@ -21,7 +21,7 @@ type InvoiceChecker interface {
 }
 
 type invoiceChecker struct {
-	paymentRepo        repository.PaymentRepositoryInterface
+	paymentRepo        repository.PaymentRepository
 	paymentAddressRepo repository.PaymentAddressRepository
 	db                 *gorm.DB
 	blockchainServices map[string]blockchain_service.BlockchainService
@@ -30,7 +30,7 @@ type invoiceChecker struct {
 
 func NewInvoiceChecker(
 	db *gorm.DB,
-	paymentRepo repository.PaymentRepositoryInterface,
+	paymentRepo repository.PaymentRepository,
 	paymentAddressRepo repository.PaymentAddressRepository,
 	blockchainServices map[string]blockchain_service.BlockchainService,
 	pollInterval time.Duration,
