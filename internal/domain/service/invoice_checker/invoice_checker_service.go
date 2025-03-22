@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/1stpay/1stpay/internal/infrastructure"
+	"github.com/1stpay/1stpay/internal/infrastructure/blockchain_service"
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/repository"
 	"gorm.io/gorm"
@@ -24,7 +24,7 @@ type invoiceChecker struct {
 	paymentRepo        repository.PaymentRepositoryInterface
 	paymentAddressRepo repository.PaymentAddressRepositoryInterface
 	db                 *gorm.DB
-	blockchainServices map[string]infrastructure.BlockchainService
+	blockchainServices map[string]blockchain_service.BlockchainService
 	pollInterval       time.Duration
 }
 
@@ -32,7 +32,7 @@ func NewInvoiceChecker(
 	db *gorm.DB,
 	paymentRepo repository.PaymentRepositoryInterface,
 	paymentAddressRepo repository.PaymentAddressRepositoryInterface,
-	blockchainServices map[string]infrastructure.BlockchainService,
+	blockchainServices map[string]blockchain_service.BlockchainService,
 	pollInterval time.Duration,
 ) InvoiceChecker {
 	return &invoiceChecker{

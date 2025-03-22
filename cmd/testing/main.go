@@ -10,13 +10,13 @@ import (
 
 	"github.com/1stpay/1stpay/internal/config"
 	invoicechecker "github.com/1stpay/1stpay/internal/domain/service/invoice_checker"
-	"github.com/1stpay/1stpay/internal/infrastructure"
+	"github.com/1stpay/1stpay/internal/infrastructure/blockchain_service"
 )
 
 func runInvoiceChecker() {
 	app := config.App()
 
-	blockService, err := infrastructure.InitBlockchainServices(app.Deps.Repos.BlockchainRepo)
+	blockService, err := blockchain_service.InitBlockchainServices(app.Deps.Repos.BlockchainRepo)
 	if err != nil {
 		panic(err)
 	}

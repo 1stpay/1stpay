@@ -1,11 +1,16 @@
 package usecase
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"math"
+	"math/big"
 	"time"
 
 	"github.com/1stpay/1stpay/internal/domain/enum"
 	"github.com/1stpay/1stpay/internal/domain/service/kms"
+	"github.com/1stpay/1stpay/internal/infrastructure/price_service"
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/repository"
 	"github.com/1stpay/1stpay/internal/transport/rest/integration/restdto"
@@ -17,6 +22,7 @@ type PaymentUsecase struct {
 	PaymentRepo        repository.PaymentRepositoryInterface
 	PaymentAddressRepo repository.PaymentAddressRepositoryInterface
 	MerchantRepo       repository.MerchantRepositoryInterface
+	PriceService       price_service.PriceService
 	DB                 *gorm.DB
 }
 
@@ -25,11 +31,18 @@ type PaymentUsecaseInterface interface {
 	GetPaymentWithAddresses(paymentID string) (model.Payment, []model.PaymentAddress, error)
 }
 
-func NewPaymentUsecase(db *gorm.DB, paymentRepo repository.PaymentRepositoryInterface, paymentAddressRepo repository.PaymentAddressRepositoryInterface, merchantRepo repository.MerchantRepositoryInterface) *PaymentUsecase {
+func NewPaymentUsecase(
+	db *gorm.DB,
+	paymentRepo repository.PaymentRepositoryInterface,
+	paymentAddressRepo repository.PaymentAddressRepositoryInterface,
+	merchantRepo repository.MerchantRepositoryInterface,
+	priceService price_service.PriceService,
+) *PaymentUsecase {
 	return &PaymentUsecase{
 		PaymentRepo:        paymentRepo,
 		PaymentAddressRepo: paymentAddressRepo,
 		MerchantRepo:       merchantRepo,
+		PriceService:       priceService,
 		DB:                 db,
 	}
 }
@@ -84,15 +97,33 @@ func (u *PaymentUsecase) CreatePaymentWithWallets(paymentData restdto.InvoiceCre
 		if err != nil {
 			return model.Payment{}, err
 		}
+		var tokenCfg map[string]string
+		if err := json.Unmarshal(mt.Token.Config, &tokenCfg); err != nil {
+			return model.Payment{}, fmt.Errorf("failed to parse config for token %s: %w", mt.ID, err)
+		}
+		priceServiceKey, ok := tokenCfg["price_service_key"]
+		if !ok || priceServiceKey == "" {
+			return model.Payment{}, fmt.Errorf("failed to query price for token %s: %w", mt.ID, err)
+		}
+		assetPrice, err := u.PriceService.GetPrice(priceServiceKey)
+		if err != nil {
+			return model.Payment{}, fmt.Errorf("failed to query price for token %s: %w", mt.ID, err)
+		}
+		requestedAmountForAsset := paymentData.RequestedAmount / assetPrice
+		factor := math.Pow10(mt.Token.Decimals)
+		bf := new(big.Float).SetFloat64(requestedAmountForAsset * factor)
+		requestedAmountForAssetWei, _ := bf.Int64()
 
 		paymentAddressList = append(paymentAddressList, model.PaymentAddress{
-			ID:         uuid.New(),
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
-			PaymentID:  payment.ID,
-			TokenID:    mt.Token.ID,
-			PublicKey:  walletData.Address,
-			PrivateKey: walletData.PrivateKey,
+			ID:                 uuid.New(),
+			CreatedAt:          time.Now(),
+			UpdatedAt:          time.Now(),
+			PaymentID:          payment.ID,
+			TokenID:            mt.Token.ID,
+			PublicKey:          walletData.Address,
+			PrivateKey:         walletData.PrivateKey,
+			RequestedAmount:    requestedAmountForAsset,
+			RequestedAmountWei: int(requestedAmountForAssetWei),
 		})
 
 	}

@@ -14,13 +14,13 @@ type Usecases struct {
 	PaymentUsecase    usecase.PaymentUsecaseInterface
 }
 
-func NewUsecases(db *gorm.DB, repos *Repos) *Usecases {
+func NewUsecases(db *gorm.DB, repos *Repos, services *Services) *Usecases {
 	userUsecase := usecase.NewUserUsecase(repos.UserRepo)
 	authUsecase := usecase.NewAuthUsecase(repos.UserRepo)
 	merchantUsecase := usecase.NewMerchantUsecase(repos.MerchantRepo)
 	blockchainUsecase := usecase.NewBlockchainUsecase(repos.BlockchainRepo)
 	tokenUsecase := usecase.NewTokenUsecase(repos.TokenRepo)
-	paymentUsecase := usecase.NewPaymentUsecase(db, repos.PaymentRepo, repos.PaymentAddressRepo, repos.MerchantRepo)
+	paymentUsecase := usecase.NewPaymentUsecase(db, repos.PaymentRepo, repos.PaymentAddressRepo, repos.MerchantRepo, services.PriceService)
 
 	return &Usecases{
 		AuthUsecase:       authUsecase,

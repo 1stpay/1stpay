@@ -16,10 +16,10 @@ type Dependencies struct {
 func NewDependencies(db *gorm.DB, env *Env) *Dependencies {
 	repos := NewRepositories(db)
 
-	usecases := NewUsecases(db, repos)
+	services := NewServices(repos, env)
+	usecases := NewUsecases(db, repos, services)
 
 	controllers := NewControllers(usecases)
-	services := NewServices(repos)
 	mw := &Middleware{
 		middleware.JWTAuthMiddleware(env.JwtSecret, usecases.UserUsecase),
 	}

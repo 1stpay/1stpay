@@ -1,4 +1,4 @@
-package infrastructure
+package blockchain_service
 
 import (
 	"encoding/json"
