@@ -20,7 +20,6 @@ type MerchantUsecase interface {
 	GetMerchantByUserId(id string) (model.Merchant, error)
 	CreateMerchantToken(merchantTokenData restdto.MerchantTokenCreateRequestDTO, merchantId string) (model.MerchantToken, error)
 	ListMerchantToken(merchantId string) ([]model.MerchantToken, error)
-	DeactivateMerchantToken(tokenID uuid.UUID) error
 }
 
 func NewMerchantUsecase(merchantRepo repository.MerchantRepository) MerchantUsecase {
@@ -92,10 +91,4 @@ func (u *merchantUsecase) ListMerchantToken(merchantId string) ([]model.Merchant
 		return []model.MerchantToken{}, err
 	}
 	return objectList, err
-}
-func (u *merchantUsecase) DeactivateMerchantToken(tokenID uuid.UUID) error {
-	if err := u.MerchantRepo.DeactivateMerchantToken(tokenID.String()); err != nil {
-		return fmt.Errorf("failed to deactivate merchant token %s: %w", tokenID.String(), err)
-	}
-	return nil
 }

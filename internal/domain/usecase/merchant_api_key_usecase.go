@@ -71,7 +71,7 @@ func (u *merchantAPIKeyUsecase) ListAPIKeys(merchantID uuid.UUID) ([]model.Merch
 }
 
 func (u *merchantAPIKeyUsecase) DeactivateMerchantToken(tokenID uuid.UUID) error {
-	if err := u.repo.DeactivateMerchantToken(tokenID.String()); err != nil {
+	if err := u.repo.DeactivateMerchantAPIKey(tokenID.String()); err != nil {
 		return fmt.Errorf("failed to deactivate merchant token %s: %w", tokenID.String(), err)
 	}
 	return nil

@@ -18,7 +18,7 @@ type MerchantRepository interface {
 	ListMerchantToken(merchantId string, opts ...MerchantTokenOption) ([]model.MerchantToken, error)
 	CreateMerchantAPIKey(apiKey model.MerchantAPIKey) (model.MerchantAPIKey, error)
 	ListMerchantAPIKey(merchantId string) ([]model.MerchantAPIKey, error)
-	DeactivateMerchantToken(tokenID string) error
+	DeactivateMerchantAPIKey(tokenID string) error
 }
 
 func NewMerchantRepository(db *gorm.DB) MerchantRepository {
@@ -92,8 +92,8 @@ func (r *merchantRepository) ListMerchantAPIKey(merchantId string) ([]model.Merc
 	return keyList, nil
 }
 
-func (r *merchantRepository) DeactivateMerchantToken(tokenID string) error {
-	return r.db.Model(&model.MerchantToken{}).
-		Where("id = ?", tokenID).
+func (r *merchantRepository) DeactivateMerchantAPIKey(apiKeyID string) error {
+	return r.db.Model(&model.MerchantAPIKey{}).
+		Where("id = ?", apiKeyID).
 		Update("is_active", false).Error
 }
