@@ -12,7 +12,7 @@ import (
 )
 
 type AuthUsecase struct {
-	UserRepo  repository.UserRepositoryInterface
+	UserRepo  repository.UserRepository
 	jwtSecret string
 }
 
@@ -21,7 +21,7 @@ type AuthUsecaseInterface interface {
 	Login(loginData restdto.LoginRequest) (model.User, string, error)
 }
 
-func NewAuthUsecase(userRepo repository.UserRepositoryInterface) *AuthUsecase {
+func NewAuthUsecase(userRepo repository.UserRepository) *AuthUsecase {
 	return &AuthUsecase{
 		UserRepo:  userRepo,
 		jwtSecret: "hehe",

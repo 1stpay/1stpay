@@ -6,7 +6,7 @@ import (
 )
 
 type Repos struct {
-	UserRepo           repository.UserRepositoryInterface
+	UserRepo           repository.UserRepository
 	MerchantRepo       repository.MerchantRepository
 	BlockchainRepo     repository.BlockchainRepository
 	TokenRepo          repository.TokenRepository

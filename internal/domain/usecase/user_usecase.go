@@ -6,7 +6,7 @@ import (
 )
 
 type userUsecase struct {
-	UserRepo repository.UserRepositoryInterface
+	UserRepo repository.UserRepository
 }
 
 type UserUsecase interface {
@@ -14,7 +14,7 @@ type UserUsecase interface {
 	GetByEmail(email string) (model.User, error)
 }
 
-func NewUserUsecase(userRepo repository.UserRepositoryInterface) *userUsecase {
+func NewUserUsecase(userRepo repository.UserRepository) *userUsecase {
 	return &userUsecase{
 		UserRepo: userRepo,
 	}
