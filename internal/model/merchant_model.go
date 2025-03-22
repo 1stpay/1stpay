@@ -26,3 +26,12 @@ type MerchantToken struct {
 	IsActive   bool      `gorm:"not null;default:false"`
 	CreatedAt  time.Time `gorm:"not null;default:now()"`
 }
+
+type MerchantAPIKey struct {
+	ID         uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
+	MerchantID uuid.UUID `gorm:"type:uuid;not null"`
+	APIKey     string    `gorm:"not null;unique"`
+	CreatedAt  time.Time `gorm:"not null;default:now()"`
+	ExpiresAt  *time.Time
+	IsActive   bool `gorm:"not null;default:true"`
+}
