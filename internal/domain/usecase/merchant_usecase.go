@@ -11,7 +11,7 @@ import (
 )
 
 type MerchantUsecase struct {
-	MerchantRepo repository.MerchantRepositoryInterface
+	MerchantRepo repository.MerchantRepository
 }
 
 type MerchantUsecaseInterface interface {
@@ -22,7 +22,7 @@ type MerchantUsecaseInterface interface {
 	ListMerchantToken(merchantId string) ([]model.MerchantToken, error)
 }
 
-func NewMerchantUsecase(merchantRepo repository.MerchantRepositoryInterface) *MerchantUsecase {
+func NewMerchantUsecase(merchantRepo repository.MerchantRepository) *MerchantUsecase {
 	return &MerchantUsecase{
 		MerchantRepo: merchantRepo,
 	}
