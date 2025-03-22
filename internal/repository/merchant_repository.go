@@ -16,6 +16,7 @@ type MerchantRepositoryInterface interface {
 	GetMerchantByUserId(userId string) (model.Merchant, error)
 	CreateMerchantToken(merchantToken model.MerchantToken) (model.MerchantToken, error)
 	ListMerchantToken(merchantId string, opts ...MerchantTokenOption) ([]model.MerchantToken, error)
+	CreateMerchantAPIKey(apiKey model.MerchantAPIKey) (model.MerchantAPIKey, error)
 }
 
 func NewMerchantRepository(db *gorm.DB) *MerchantRepository {
@@ -71,4 +72,11 @@ func (r *MerchantRepository) ListMerchantToken(merchantId string, opts ...Mercha
 		return []model.MerchantToken{}, err
 	}
 	return tokenList, nil
+}
+
+func (r *MerchantRepository) CreateMerchantAPIKey(apiKey model.MerchantAPIKey) (model.MerchantAPIKey, error) {
+	if err := r.db.Create(&apiKey).Error; err != nil {
+		return model.MerchantAPIKey{}, err
+	}
+	return apiKey, nil
 }
