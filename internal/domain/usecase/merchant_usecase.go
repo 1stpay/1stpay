@@ -6,7 +6,7 @@ import (
 
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/repository"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/frontend/rest_dto"
+	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/rest_dto"
 	"github.com/google/uuid"
 )
 
@@ -77,6 +77,7 @@ func (u *MerchantUsecase) CreateMerchantToken(merchantTokenData restdto.Merchant
 	merchantToken := model.MerchantToken{
 		MerchantID: merchantUUID,
 		TokenID:    merchantTokenData.TokenID,
+		IsActive:   merchantTokenData.Active,
 	}
 	merchantToken, err = u.MerchantRepo.CreateMerchantToken(merchantToken)
 	if err != nil {

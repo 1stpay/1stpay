@@ -27,7 +27,6 @@ func NewAdminDatabase(connStr string) (*AdminDatabase, error) {
 
 func (adminDB *AdminDatabase) CreateTestDatabase(ctx context.Context) (string, error) {
 	testDBName := fmt.Sprintf("test_db_%d", time.Now().UnixNano())
-	// Используем кавычки для идентификатора для повышения безопасности.
 	createQuery := fmt.Sprintf("CREATE DATABASE \"%s\"", testDBName)
 	if _, err := adminDB.db.ExecContext(ctx, createQuery); err != nil {
 		return "", fmt.Errorf("error creating test DB: %w", err)

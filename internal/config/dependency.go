@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/1stpay/1stpay/internal/transport/rest/frontend/middleware"
+	"github.com/1stpay/1stpay/internal/transport/rest/merchant/middleware"
 	"gorm.io/gorm"
 )
 
@@ -10,12 +10,14 @@ type Dependencies struct {
 	Usecases    *Usecases
 	Controllers *Controllers
 	Middleware  *Middleware
+	Services    *Services
 }
 
 func NewDependencies(db *gorm.DB, env *Env) *Dependencies {
 	repos := NewRepositories(db)
 
-	usecases := NewUsecases(repos)
+	services := NewServices(repos, env)
+	usecases := NewUsecases(db, repos, services)
 
 	controllers := NewControllers(usecases)
 	mw := &Middleware{
@@ -27,5 +29,6 @@ func NewDependencies(db *gorm.DB, env *Env) *Dependencies {
 		Usecases:    usecases,
 		Controllers: controllers,
 		Middleware:  mw,
+		Services:    services,
 	}
 }
