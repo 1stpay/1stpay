@@ -6,7 +6,7 @@ import (
 )
 
 type BlockchainUsecase struct {
-	BlockchainRepo repository.BlockchainRepositoryInterface
+	BlockchainRepo repository.BlockchainRepository
 }
 
 type BlockchainUsecaseInterface interface {
@@ -14,7 +14,7 @@ type BlockchainUsecaseInterface interface {
 	Create(blockchain model.Blockchain) (model.Blockchain, error)
 }
 
-func NewBlockchainUsecase(repo repository.BlockchainRepositoryInterface) *BlockchainUsecase {
+func NewBlockchainUsecase(repo repository.BlockchainRepository) *BlockchainUsecase {
 	return &BlockchainUsecase{
 		BlockchainRepo: repo,
 	}

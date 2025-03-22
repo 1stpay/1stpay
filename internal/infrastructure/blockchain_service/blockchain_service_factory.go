@@ -9,7 +9,7 @@ import (
 	"github.com/1stpay/1stpay/internal/repository"
 )
 
-func InitBlockchainServices(blockchainRepo repository.BlockchainRepositoryInterface) (map[string]BlockchainService, error) {
+func InitBlockchainServices(blockchainRepo repository.BlockchainRepository) (map[string]BlockchainService, error) {
 	blockchains, err := blockchainRepo.ListActive()
 	if err != nil {
 		return nil, fmt.Errorf("failed to query blockchain list")
