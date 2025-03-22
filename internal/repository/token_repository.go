@@ -5,22 +5,22 @@ import (
 	"gorm.io/gorm"
 )
 
-type TokenRepository struct {
+type tokenRepository struct {
 	db *gorm.DB
 }
 
-type TokenRepositoryInterface interface {
+type TokenRepository interface {
 	ListActive() ([]model.Token, error)
 	Create(Token model.Token) (model.Token, error)
 }
 
-func NewTokenRepository(db *gorm.DB) *TokenRepository {
-	return &TokenRepository{
+func NewTokenRepository(db *gorm.DB) TokenRepository {
+	return &tokenRepository{
 		db: db,
 	}
 }
 
-func (r *TokenRepository) ListActive() ([]model.Token, error) {
+func (r *tokenRepository) ListActive() ([]model.Token, error) {
 	var TokenList []model.Token
 	if err := r.db.Where("is_active = ?", true).Find(&TokenList).Error; err != nil {
 		return []model.Token{}, err
@@ -28,7 +28,7 @@ func (r *TokenRepository) ListActive() ([]model.Token, error) {
 	return TokenList, nil
 }
 
-func (r *TokenRepository) Create(Token model.Token) (model.Token, error) {
+func (r *tokenRepository) Create(Token model.Token) (model.Token, error) {
 	if err := r.db.Create(&Token).Error; err != nil {
 		return model.Token{}, err
 	}

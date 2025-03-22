@@ -6,13 +6,13 @@ import (
 
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/repository"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/rest_dto"
+	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthUsecase struct {
-	UserRepo  repository.UserRepositoryInterface
+	UserRepo  repository.UserRepository
 	jwtSecret string
 }
 
@@ -21,7 +21,7 @@ type AuthUsecaseInterface interface {
 	Login(loginData restdto.LoginRequest) (model.User, string, error)
 }
 
-func NewAuthUsecase(userRepo repository.UserRepositoryInterface) *AuthUsecase {
+func NewAuthUsecase(userRepo repository.UserRepository) *AuthUsecase {
 	return &AuthUsecase{
 		UserRepo:  userRepo,
 		jwtSecret: "hehe",

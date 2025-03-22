@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/rest_dto"
+	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/1stpay/1stpay/test"
 	"github.com/stretchr/testify/assert"
 )

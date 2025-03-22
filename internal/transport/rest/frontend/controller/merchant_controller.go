@@ -5,16 +5,16 @@ import (
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
 	"github.com/1stpay/1stpay/internal/transport/rest/frontend/helpers"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/rest_dto"
+	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/gin-gonic/gin"
 )
 
 type MerchantController struct {
-	MerchantUsecase usecase.MerchantUsecaseInterface
-	UserUsecase     usecase.UserUsecaseInterface
+	MerchantUsecase usecase.MerchantUsecase
+	UserUsecase     usecase.UserUsecase
 }
 
-func NewMerchantController(merchantUsecase usecase.MerchantUsecaseInterface, userUsecase usecase.UserUsecaseInterface) *MerchantController {
+func NewMerchantController(merchantUsecase usecase.MerchantUsecase, userUsecase usecase.UserUsecase) *MerchantController {
 	return &MerchantController{
 		MerchantUsecase: merchantUsecase,
 		UserUsecase:     userUsecase,

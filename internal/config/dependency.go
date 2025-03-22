@@ -1,7 +1,8 @@
 package config
 
 import (
-	"github.com/1stpay/1stpay/internal/transport/rest/merchant/middleware"
+	integrationMiddleware "github.com/1stpay/1stpay/internal/transport/rest/integration/middleware"
+	merchantMiddleware "github.com/1stpay/1stpay/internal/transport/rest/merchant/middleware"
 	"gorm.io/gorm"
 )
 
@@ -21,7 +22,8 @@ func NewDependencies(db *gorm.DB, env *Env) *Dependencies {
 
 	controllers := NewControllers(usecases)
 	mw := &Middleware{
-		middleware.JWTAuthMiddleware(env.JwtSecret, usecases.UserUsecase),
+		merchantMiddleware.JWTAuthMiddleware(env.JwtSecret, usecases.UserUsecase),
+		integrationMiddleware.APIKeyAuthMiddleware(usecases.MerchantAPIKeyUsecase),
 	}
 
 	return &Dependencies{

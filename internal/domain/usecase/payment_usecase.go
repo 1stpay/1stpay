@@ -13,32 +13,32 @@ import (
 	"github.com/1stpay/1stpay/internal/infrastructure/price_service"
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/repository"
-	"github.com/1stpay/1stpay/internal/transport/rest/integration/restdto"
+	"github.com/1stpay/1stpay/internal/transport/rest/common/restdto"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type PaymentUsecase struct {
-	PaymentRepo        repository.PaymentRepositoryInterface
-	PaymentAddressRepo repository.PaymentAddressRepositoryInterface
-	MerchantRepo       repository.MerchantRepositoryInterface
+type paymentUsecase struct {
+	PaymentRepo        repository.PaymentRepository
+	PaymentAddressRepo repository.PaymentAddressRepository
+	MerchantRepo       repository.MerchantRepository
 	PriceService       price_service.PriceService
 	DB                 *gorm.DB
 }
 
-type PaymentUsecaseInterface interface {
-	CreatePaymentWithWallets(paymentData restdto.InvoiceCreateRestDTO, merchantId uuid.UUID) (model.Payment, error)
+type PaymentUsecase interface {
+	CreatePaymentWithWallets(paymentData restdto.PaymentCreateRestDTO, merchantId uuid.UUID) (model.Payment, error)
 	GetPaymentWithAddresses(paymentID string) (model.Payment, []model.PaymentAddress, error)
 }
 
 func NewPaymentUsecase(
 	db *gorm.DB,
-	paymentRepo repository.PaymentRepositoryInterface,
-	paymentAddressRepo repository.PaymentAddressRepositoryInterface,
-	merchantRepo repository.MerchantRepositoryInterface,
+	paymentRepo repository.PaymentRepository,
+	paymentAddressRepo repository.PaymentAddressRepository,
+	merchantRepo repository.MerchantRepository,
 	priceService price_service.PriceService,
-) *PaymentUsecase {
-	return &PaymentUsecase{
+) PaymentUsecase {
+	return &paymentUsecase{
 		PaymentRepo:        paymentRepo,
 		PaymentAddressRepo: paymentAddressRepo,
 		MerchantRepo:       merchantRepo,
@@ -47,7 +47,7 @@ func NewPaymentUsecase(
 	}
 }
 
-func (u *PaymentUsecase) CreatePaymentWithWallets(paymentData restdto.InvoiceCreateRestDTO, merchantId uuid.UUID) (model.Payment, error) {
+func (u *paymentUsecase) CreatePaymentWithWallets(paymentData restdto.PaymentCreateRestDTO, merchantId uuid.UUID) (model.Payment, error) {
 	tx := u.DB.Begin()
 	if tx.Error != nil {
 		return model.Payment{}, tx.Error
@@ -138,7 +138,7 @@ func (u *PaymentUsecase) CreatePaymentWithWallets(paymentData restdto.InvoiceCre
 	return payment, nil
 }
 
-func (u *PaymentUsecase) GetPaymentWithAddresses(paymentID string) (model.Payment, []model.PaymentAddress, error) {
+func (u *paymentUsecase) GetPaymentWithAddresses(paymentID string) (model.Payment, []model.PaymentAddress, error) {
 	payment, paypaymentAddressList, err := u.PaymentRepo.GetPaymentWithAddresses(paymentID)
 	if err != nil {
 		return model.Payment{}, []model.PaymentAddress{}, err

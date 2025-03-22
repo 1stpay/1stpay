@@ -6,15 +6,15 @@ import (
 
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/repository"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/rest_dto"
+	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/google/uuid"
 )
 
-type MerchantUsecase struct {
-	MerchantRepo repository.MerchantRepositoryInterface
+type merchantUsecase struct {
+	MerchantRepo repository.MerchantRepository
 }
 
-type MerchantUsecaseInterface interface {
+type MerchantUsecase interface {
 	CreateMerchant(merchantData restdto.MerchantCreateRequestDTO, userId string) (model.Merchant, error)
 	UpdateMerchant(merchantData restdto.MerchantCreateRequestDTO, userId string) (model.Merchant, error)
 	GetMerchantByUserId(id string) (model.Merchant, error)
@@ -22,13 +22,13 @@ type MerchantUsecaseInterface interface {
 	ListMerchantToken(merchantId string) ([]model.MerchantToken, error)
 }
 
-func NewMerchantUsecase(merchantRepo repository.MerchantRepositoryInterface) *MerchantUsecase {
-	return &MerchantUsecase{
+func NewMerchantUsecase(merchantRepo repository.MerchantRepository) MerchantUsecase {
+	return &merchantUsecase{
 		MerchantRepo: merchantRepo,
 	}
 }
 
-func (u *MerchantUsecase) CreateMerchant(merchantData restdto.MerchantCreateRequestDTO, userId string) (model.Merchant, error) {
+func (u *merchantUsecase) CreateMerchant(merchantData restdto.MerchantCreateRequestDTO, userId string) (model.Merchant, error) {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return model.Merchant{}, fmt.Errorf("invalid user id format: %w", err)
@@ -45,7 +45,7 @@ func (u *MerchantUsecase) CreateMerchant(merchantData restdto.MerchantCreateRequ
 	}
 	return u.MerchantRepo.CreateMerchant(merchant)
 }
-func (u *MerchantUsecase) UpdateMerchant(merchantData restdto.MerchantCreateRequestDTO, userId string) (model.Merchant, error) {
+func (u *merchantUsecase) UpdateMerchant(merchantData restdto.MerchantCreateRequestDTO, userId string) (model.Merchant, error) {
 	existingMerchant, err := u.MerchantRepo.GetMerchantByUserId(userId)
 	existingMerchant.Name = merchantData.Name
 	if err != nil {
@@ -54,7 +54,7 @@ func (u *MerchantUsecase) UpdateMerchant(merchantData restdto.MerchantCreateRequ
 
 	return u.MerchantRepo.UpdateMerchant(existingMerchant)
 }
-func (u *MerchantUsecase) GetMerchantByUserId(userId string) (model.Merchant, error) {
+func (u *merchantUsecase) GetMerchantByUserId(userId string) (model.Merchant, error) {
 	existingMerchant, err := u.MerchantRepo.GetMerchantByUserId(userId)
 	if err != nil {
 		return model.Merchant{}, errors.New("merchant not found")
@@ -62,7 +62,7 @@ func (u *MerchantUsecase) GetMerchantByUserId(userId string) (model.Merchant, er
 	return existingMerchant, nil
 }
 
-func (u *MerchantUsecase) CreateMerchantToken(merchantTokenData restdto.MerchantTokenCreateRequestDTO, merchantId string) (model.MerchantToken, error) {
+func (u *merchantUsecase) CreateMerchantToken(merchantTokenData restdto.MerchantTokenCreateRequestDTO, merchantId string) (model.MerchantToken, error) {
 	merchantUUID, err := uuid.Parse(merchantId)
 	if err != nil {
 		return model.MerchantToken{}, fmt.Errorf("invalid user id format: %w", err)
@@ -85,7 +85,7 @@ func (u *MerchantUsecase) CreateMerchantToken(merchantTokenData restdto.Merchant
 	}
 	return merchantToken, err
 }
-func (u *MerchantUsecase) ListMerchantToken(merchantId string) ([]model.MerchantToken, error) {
+func (u *merchantUsecase) ListMerchantToken(merchantId string) ([]model.MerchantToken, error) {
 	objectList, err := u.MerchantRepo.ListMerchantToken(merchantId)
 	if err != nil {
 		return []model.MerchantToken{}, err

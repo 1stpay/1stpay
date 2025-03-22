@@ -12,7 +12,7 @@ import (
 
 const ContextUserKey = "user"
 
-func JWTAuthMiddleware(jwtSecret string, userUsecase usecase.UserUsecaseInterface) gin.HandlerFunc {
+func JWTAuthMiddleware(jwtSecret string, userUsecase usecase.UserUsecase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {

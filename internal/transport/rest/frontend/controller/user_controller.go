@@ -11,14 +11,14 @@ import (
 )
 
 type UserController struct {
-	UserUsecase usecase.UserUsecaseInterface
+	UserUsecase usecase.UserUsecase
 }
 
 type UserControllerInterfase interface {
 	GetProfile(c *gin.Context)
 }
 
-func NewUserController(userUsecase usecase.UserUsecaseInterface) *UserController {
+func NewUserController(userUsecase usecase.UserUsecase) *UserController {
 	return &UserController{
 		UserUsecase: userUsecase,
 	}

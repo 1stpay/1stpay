@@ -6,19 +6,19 @@ import (
 	"github.com/1stpay/1stpay/internal/domain/usecase"
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/transport/rest/merchant/middleware"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/rest_dto"
+	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
-	UserUsecase usecase.UserUsecaseInterface
+	UserUsecase usecase.UserUsecase
 }
 
 type UserControllerInterfase interface {
 	GetProfile(c *gin.Context)
 }
 
-func NewUserController(userUsecase usecase.UserUsecaseInterface) *UserController {
+func NewUserController(userUsecase usecase.UserUsecase) *UserController {
 	return &UserController{
 		UserUsecase: userUsecase,
 	}

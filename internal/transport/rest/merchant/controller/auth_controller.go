@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
-	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/rest_dto"
+	restdto "github.com/1stpay/1stpay/internal/transport/rest/merchant/restdto"
 	"github.com/gin-gonic/gin"
 )
 

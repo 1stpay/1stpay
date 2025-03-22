@@ -5,21 +5,17 @@ import (
 
 	"github.com/1stpay/1stpay/internal/domain/usecase"
 	"github.com/1stpay/1stpay/internal/transport/rest/common/restdto"
-	"github.com/1stpay/1stpay/internal/transport/rest/merchant/helpers"
+	"github.com/1stpay/1stpay/internal/transport/rest/integration/helpers"
 	"github.com/gin-gonic/gin"
 )
 
 type PaymentController struct {
-	PaymentUsecase  usecase.PaymentUsecase
-	MerchantUsecase usecase.MerchantUsecase
-	UserUsecase     usecase.UserUsecase
+	PaymentUsecase usecase.PaymentUsecase
 }
 
-func NewPaymentController(paymentUsecase usecase.PaymentUsecase, merchantUsecase usecase.MerchantUsecase, userUsecase usecase.UserUsecase) *PaymentController {
+func NewPaymentController(paymentUsecase usecase.PaymentUsecase) *PaymentController {
 	return &PaymentController{
-		PaymentUsecase:  paymentUsecase,
-		MerchantUsecase: merchantUsecase,
-		UserUsecase:     userUsecase,
+		PaymentUsecase: paymentUsecase,
 	}
 }
 
@@ -29,16 +25,10 @@ func (con *PaymentController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
-	user, ok := helpers.GetUserOrAbort(c, con.UserUsecase)
+	merchant, ok := helpers.GetMerchantOrAbort(c)
 	if !ok {
 		return
 	}
-	merchant, err := con.MerchantUsecase.GetMerchantByUserId(user.ID.String())
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Merchant not found"})
-		return
-	}
-
 	payment, err := con.PaymentUsecase.CreatePaymentWithWallets(req, merchant.ID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Err while payment create"})

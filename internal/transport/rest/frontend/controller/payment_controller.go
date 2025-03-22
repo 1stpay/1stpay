@@ -10,10 +10,10 @@ import (
 )
 
 type FrontendPaymentController struct {
-	PaymentUsecase usecase.PaymentUsecaseInterface
+	PaymentUsecase usecase.PaymentUsecase
 }
 
-func NewPaymentController(paymentUsecase usecase.PaymentUsecaseInterface) *FrontendPaymentController {
+func NewPaymentController(paymentUsecase usecase.PaymentUsecase) *FrontendPaymentController {
 	return &FrontendPaymentController{
 		PaymentUsecase: paymentUsecase,
 	}

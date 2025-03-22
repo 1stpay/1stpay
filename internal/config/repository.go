@@ -6,12 +6,12 @@ import (
 )
 
 type Repos struct {
-	UserRepo           repository.UserRepositoryInterface
-	MerchantRepo       repository.MerchantRepositoryInterface
-	BlockchainRepo     repository.BlockchainRepositoryInterface
-	TokenRepo          repository.TokenRepositoryInterface
-	PaymentRepo        repository.PaymentRepositoryInterface
-	PaymentAddressRepo repository.PaymentAddressRepositoryInterface
+	UserRepo           repository.UserRepository
+	MerchantRepo       repository.MerchantRepository
+	BlockchainRepo     repository.BlockchainRepository
+	TokenRepo          repository.TokenRepository
+	PaymentRepo        repository.PaymentRepository
+	PaymentAddressRepo repository.PaymentAddressRepository
 }
 
 func NewRepositories(db *gorm.DB) *Repos {
