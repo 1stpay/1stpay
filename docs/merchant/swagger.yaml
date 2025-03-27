@@ -1,0 +1,568 @@
+definitions:
+  gin.H:
+    additionalProperties: {}
+    type: object
+  github_com_1stpay_1stpay_internal_domain_enum.NetworkType:
+    enum:
+    - evm
+    - tron
+    - ton
+    - solana
+    type: string
+    x-enum-varnames:
+    - EVM
+    - TRON
+    - TON
+    - SOLANA
+  github_com_1stpay_1stpay_internal_transport_rest_common_restdto.PaymentCreateResponseRestDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_common_restdto.PaymentCreateRestDTO:
+    properties:
+      email:
+        type: string
+      requested_amount:
+        type: number
+    required:
+    - requested_amount
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.AccessTokenResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.BlockchainListResponseDTO:
+    properties:
+      chain_type:
+        $ref: '#/definitions/github_com_1stpay_1stpay_internal_domain_enum.NetworkType'
+      id:
+        type: string
+      is_active:
+        type: boolean
+      logo:
+        $ref: '#/definitions/null.String'
+      name:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.CreateAPIKeyRequestDTO:
+    properties:
+      expires_at:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.CreateAPIKeyResponseDTO:
+    properties:
+      api_key:
+        type: string
+      created_at:
+        type: string
+      expires_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantAPIKeyResponseDTO:
+    properties:
+      created_at:
+        type: string
+      expires_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateRequestDTO:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateResponseDTO:
+    properties:
+      commision_rate:
+        type: number
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantDetailResponseDTO:
+    properties:
+      commision_rate:
+        type: number
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateRequestDTO:
+    properties:
+      active:
+        type: boolean
+      token_id:
+        type: string
+    required:
+    - active
+    - token_id
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateResponseDTO:
+    properties:
+      active:
+        type: boolean
+      created_at:
+        type: string
+      id:
+        type: string
+      merchant_id:
+        type: string
+      token_id:
+        type: string
+    required:
+    - active
+    - created_at
+    - id
+    - merchant_id
+    - token_id
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.TokenListResponseDTO:
+    properties:
+      blockchain_id:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_native:
+        type: boolean
+      logo:
+        $ref: '#/definitions/null.String'
+      name:
+        type: string
+      symbol:
+        type: string
+    type: object
+  github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.UserMeResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+    type: object
+  null.String:
+    properties:
+      string:
+        type: string
+      valid:
+        description: Valid is true if String is not NULL
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /merchant/api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Аутентифицирует пользователя и возвращает токен доступа
+      parameters:
+      - description: Данные для входа
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Возвращает токен доступа
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.AccessTokenResponse'
+        "400":
+          description: Неверные входные данные
+          schema:
+            $ref: '#/definitions/gin.H'
+        "403":
+          description: Доступ запрещён
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Вход пользователя
+      tags:
+      - Auth
+  /merchant/api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Registers new user and returns access token
+      parameters:
+      - description: Registration data
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Returns success token
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.AccessTokenResponse'
+        "400":
+          description: Incorrect data
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: User registration
+      tags:
+      - Auth
+  /merchant/api/v1/blockchain/list/:
+    get:
+      description: Retrieve a list of all active blockchains.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of active blockchains
+          schema:
+            items:
+              $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.BlockchainListResponseDTO'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List active blockchains
+      tags:
+      - Blockchain
+  /merchant/api/v1/merchant/:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new merchant using provided data and returns the merchant
+        details.
+      parameters:
+      - description: Merchant creation payload
+        in: body
+        name: merchant
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Merchant created successfully
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateResponseDTO'
+        "400":
+          description: Invalid request or error during creation
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new merchant
+      tags:
+      - Merchant
+  /merchant/api/v1/merchant/me/:
+    get:
+      description: Retrieves details of the merchant associated with the current user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Merchant details
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantDetailResponseDTO'
+        "404":
+          description: Merchant not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get merchant details
+      tags:
+      - Merchant
+    put:
+      consumes:
+      - application/json
+      description: Updates the merchant information for the current user.
+      parameters:
+      - description: Merchant update payload
+        in: body
+        name: merchant
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Merchant updated successfully
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateResponseDTO'
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update merchant information
+      tags:
+      - Merchant
+  /merchant/api/v1/merchant/me/api-key/:
+    get:
+      description: Retrieves all API keys associated with the current merchant.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of API keys
+          schema:
+            items:
+              $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantAPIKeyResponseDTO'
+            type: array
+        "400":
+          description: Merchant not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List merchant API keys
+      tags:
+      - Merchant
+      - APIKey
+    post:
+      consumes:
+      - application/json
+      description: Generates and stores a new API key for the current merchant. The
+        raw API key is returned only once.
+      parameters:
+      - description: API key creation payload
+        in: body
+        name: apiKey
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.CreateAPIKeyRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: API key created successfully
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.CreateAPIKeyResponseDTO'
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new API key for a merchant
+      tags:
+      - Merchant
+      - APIKey
+  /merchant/api/v1/merchant/me/api-key/{id}/:
+    post:
+      description: Deactivates a merchant's API key specified by its ID.
+      parameters:
+      - description: API key ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: API key deactivated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid API key ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error deactivating API key
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deactivate an API key
+      tags:
+      - Merchant
+      - APIKey
+  /merchant/api/v1/merchant/me/tokens/:
+    get:
+      description: Retrieves a list of tokens associated with the current merchant.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of merchant tokens
+          schema:
+            items:
+              $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateResponseDTO'
+            type: array
+        "404":
+          description: Merchant not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List merchant tokens
+      tags:
+      - Merchant
+      - Token
+    post:
+      consumes:
+      - application/json
+      description: Creates a new token for the current merchant.
+      parameters:
+      - description: Merchant token creation payload
+        in: body
+        name: token
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token created successfully
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateResponseDTO'
+        "400":
+          description: Invalid request or merchant not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a merchant token
+      tags:
+      - Merchant
+      - Token
+  /merchant/api/v1/payments/:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new payment with associated wallets for the current merchant.
+      parameters:
+      - description: Payment creation payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_common_restdto.PaymentCreateRestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment created successfully
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_common_restdto.PaymentCreateResponseRestDTO'
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Merchant not found or error during payment creation
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new payment
+      tags:
+      - Payment
+  /merchant/api/v1/token/:
+    get:
+      description: Retrieves a list of all active tokens.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of active tokens
+          schema:
+            items:
+              $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.TokenListResponseDTO'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List active tokens
+      tags:
+      - Token
+  /merchant/api/v1/user/me/:
+    get:
+      description: Retrieves the profile of the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User profile data
+          schema:
+            $ref: '#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.UserMeResponse'
+        "400":
+          description: Invalid user or invalid user type
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user profile
+      tags:
+      - User
+swagger: "2.0"

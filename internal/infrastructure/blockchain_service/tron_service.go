@@ -1,6 +1,7 @@
 package blockchain_service
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,6 +9,8 @@ import (
 	"math/big"
 	"net/http"
 	"strings"
+
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type TronService struct {
@@ -55,7 +58,7 @@ func (s TronService) fetchAccountData(address string) (*TronAccountResponse, err
 	return &accountResp, nil
 }
 
-func (s TronService) GetNativeBalance(address string) (*big.Int, error) {
+func (s TronService) GetNativeBalance(ctx context.Context, address string) (*big.Int, error) {
 
 	accountResp, err := s.fetchAccountData(address)
 	if err != nil {
@@ -70,7 +73,7 @@ func (s TronService) GetNativeBalance(address string) (*big.Int, error) {
 	return balance, nil
 }
 
-func (s TronService) GetTokenBalance(address, tokenAddress string) (*big.Int, error) {
+func (s TronService) GetTokenBalance(ctx context.Context, address, tokenAddress string) (*big.Int, error) {
 	accountResp, err := s.fetchAccountData(address)
 	if err != nil {
 		return nil, err
@@ -92,4 +95,20 @@ func (s TronService) GetTokenBalance(address, tokenAddress string) (*big.Int, er
 	}
 
 	return nil, fmt.Errorf("token %s not found in account %s", tokenAddress, address)
+}
+
+func (s TronService) TransferNative(ctx context.Context, senderPrivateKey string, toAddress string, amount *big.Int) (common.Hash, error) {
+	return common.Hash{}, errors.New("TransferNative for Tron is not implemented yet")
+}
+
+// TransferNativeRemaining transfers the entire native balance (minus fee) from the sender's wallet to the destination address.
+// Currently, this is a stub implementation.
+func (s TronService) TransferNativeRemaining(ctx context.Context, senderPrivateKey string, toAddress string) (common.Hash, error) {
+	return common.Hash{}, errors.New("TransferNativeRemaining for Tron is not implemented yet")
+}
+
+// TransferTokenRemaining transfers the entire balance of the specified TRC20 token from the sender's wallet to a destination address.
+// Currently, this is a stub implementation.
+func (s TronService) TransferTokenRemaining(ctx context.Context, senderPrivateKey string, tokenAddress string, toAddress string) (common.Hash, error) {
+	return common.Hash{}, errors.New("TransferTokenRemaining for Tron is not implemented yet")
 }

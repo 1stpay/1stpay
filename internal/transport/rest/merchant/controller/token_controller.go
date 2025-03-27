@@ -19,6 +19,14 @@ func NewTokenController(usecase usecase.TokenUsecase) *TokenController {
 	}
 }
 
+// ListActive godoc
+// @Summary List active tokens
+// @Description Retrieves a list of all active tokens.
+// @Tags Token
+// @Produce json
+// @Success 200 {array} restdto.TokenListResponseDTO "List of active tokens"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /merchant/api/v1/token/ [get]
 func (con *TokenController) ListActive(c *gin.Context) {
 	tokenList, err := con.TokenUsecase.ListActive()
 	if err != nil {

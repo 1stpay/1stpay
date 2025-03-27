@@ -1,8 +1,11 @@
 package route
 
 import (
+	_ "github.com/1stpay/1stpay/docs/merchant"
 	"github.com/1stpay/1stpay/internal/config"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
@@ -18,5 +21,6 @@ func SetupMerchantRoutes(env *config.Env, db *gorm.DB, group *gin.RouterGroup, d
 	NewUserRouter(env, db, protectedRouter, deps)
 	NewMerchantRouter(env, db, protectedRouter, deps)
 	NewPaymentRouter(env, protectedRouter, deps)
+	publicRouter.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 }

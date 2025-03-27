@@ -24,6 +24,16 @@ func NewMerchantController(merchantUsecase usecase.MerchantUsecase, merchantAPIK
 	}
 }
 
+// MerchantCreate godoc
+// @Summary Create a new merchant
+// @Description Creates a new merchant using provided data and returns the merchant details.
+// @Tags Merchant
+// @Accept json
+// @Produce json
+// @Param merchant body restdto.MerchantCreateRequestDTO true "Merchant creation payload"
+// @Success 201 {object} restdto.MerchantCreateResponseDTO "Merchant created successfully"
+// @Failure 400 {object} map[string]string "Invalid request or error during creation"
+// @Router /merchant/api/v1/merchant/ [post]
 func (u *MerchantController) MerchantCreate(c *gin.Context) {
 	var req restdto.MerchantCreateRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -49,6 +59,14 @@ func (u *MerchantController) MerchantCreate(c *gin.Context) {
 	})
 }
 
+// MerchantDetail godoc
+// @Summary Get merchant details
+// @Description Retrieves details of the merchant associated with the current user.
+// @Tags Merchant
+// @Produce json
+// @Success 200 {object} restdto.MerchantDetailResponseDTO "Merchant details"
+// @Failure 404 {object} map[string]string "Merchant not found"
+// @Router /merchant/api/v1/merchant/me/ [get]
 func (u *MerchantController) MerchantDetail(c *gin.Context) {
 	user, ok := helpers.GetUserOrAbort(c, u.UserUsecase)
 	if !ok {
@@ -68,6 +86,16 @@ func (u *MerchantController) MerchantDetail(c *gin.Context) {
 	})
 }
 
+// MerchantUpdate godoc
+// @Summary Update merchant information
+// @Description Updates the merchant information for the current user.
+// @Tags Merchant
+// @Accept json
+// @Produce json
+// @Param merchant body restdto.MerchantCreateRequestDTO true "Merchant update payload"
+// @Success 200 {object} restdto.MerchantCreateResponseDTO "Merchant updated successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Router /merchant/api/v1/merchant/me/ [put]
 func (u *MerchantController) MerchantUpdate(c *gin.Context) {
 	var req restdto.MerchantCreateRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -94,6 +122,14 @@ func (u *MerchantController) MerchantUpdate(c *gin.Context) {
 	c.JSON(http.StatusOK, responseData)
 }
 
+// MerchantTokenList godoc
+// @Summary List merchant tokens
+// @Description Retrieves a list of tokens associated with the current merchant.
+// @Tags Merchant, Token
+// @Produce json
+// @Success 200 {array} restdto.MerchantTokenCreateResponseDTO "List of merchant tokens"
+// @Failure 404 {object} map[string]string "Merchant not found"
+// @Router /merchant/api/v1/merchant/me/tokens/ [get]
 func (u *MerchantController) MerchantTokenList(c *gin.Context) {
 	user, ok := helpers.GetUserOrAbort(c, u.UserUsecase)
 	if !ok {
@@ -123,6 +159,16 @@ func (u *MerchantController) MerchantTokenList(c *gin.Context) {
 	c.JSON(http.StatusOK, dtoList)
 }
 
+// MerchantTokenCreate godoc
+// @Summary Create a merchant token
+// @Description Creates a new token for the current merchant.
+// @Tags Merchant, Token
+// @Accept json
+// @Produce json
+// @Param token body restdto.MerchantTokenCreateRequestDTO true "Merchant token creation payload"
+// @Success 200 {object} restdto.MerchantTokenCreateResponseDTO "Token created successfully"
+// @Failure 400 {object} map[string]string "Invalid request or merchant not found"
+// @Router /merchant/api/v1/merchant/me/tokens/ [post]
 func (u *MerchantController) MerchantTokenCreate(c *gin.Context) {
 	var req restdto.MerchantTokenCreateRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -152,6 +198,16 @@ func (u *MerchantController) MerchantTokenCreate(c *gin.Context) {
 	})
 }
 
+// MerchantAPIKeyCreate godoc
+// @Summary Create a new API key for a merchant
+// @Description Generates and stores a new API key for the current merchant. The raw API key is returned only once.
+// @Tags Merchant, APIKey
+// @Accept json
+// @Produce json
+// @Param apiKey body restdto.CreateAPIKeyRequestDTO true "API key creation payload"
+// @Success 201 {object} restdto.CreateAPIKeyResponseDTO "API key created successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Router /merchant/api/v1/merchant/me/api-key/ [post]
 func (u *MerchantController) MerchantAPIKeyCreate(c *gin.Context) {
 	var req restdto.CreateAPIKeyRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -188,6 +244,14 @@ func (u *MerchantController) MerchantAPIKeyCreate(c *gin.Context) {
 	c.JSON(http.StatusCreated, response)
 }
 
+// MerchantAPIKeyList godoc
+// @Summary List merchant API keys
+// @Description Retrieves all API keys associated with the current merchant.
+// @Tags Merchant, APIKey
+// @Produce json
+// @Success 200 {array} restdto.MerchantAPIKeyResponseDTO "List of API keys"
+// @Failure 400 {object} map[string]string "Merchant not found"
+// @Router /merchant/api/v1/merchant/me/api-key/ [get]
 func (u *MerchantController) MerchantAPIKeyList(c *gin.Context) {
 	user, ok := helpers.GetUserOrAbort(c, u.UserUsecase)
 	if !ok {
@@ -220,6 +284,16 @@ func (u *MerchantController) MerchantAPIKeyList(c *gin.Context) {
 	c.JSON(http.StatusOK, dtos)
 }
 
+// MerchantAPIKeyDeactivate godoc
+// @Summary Deactivate an API key
+// @Description Deactivates a merchant's API key specified by its ID.
+// @Tags Merchant, APIKey
+// @Produce json
+// @Param id path string true "API key ID"
+// @Success 200 {object} map[string]string "API key deactivated successfully"
+// @Failure 400 {object} map[string]string "Invalid API key ID"
+// @Failure 500 {object} map[string]string "Error deactivating API key"
+// @Router /merchant/api/v1/merchant/me/api-key/{id}/ [post]
 func (u *MerchantController) MerchantAPIKeyDeactivate(c *gin.Context) {
 	keyIDStr := c.Param("id")
 	keyID, err := uuid.Parse(keyIDStr)

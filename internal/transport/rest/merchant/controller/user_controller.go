@@ -24,6 +24,14 @@ func NewUserController(userUsecase usecase.UserUsecase) *UserController {
 	}
 }
 
+// GetProfile godoc
+// @Summary Get user profile
+// @Description Retrieves the profile of the authenticated user.
+// @Tags User
+// @Produce json
+// @Success 200 {object} restdto.UserMeResponse "User profile data"
+// @Failure 400 {object} map[string]string "Invalid user or invalid user type"
+// @Router /merchant/api/v1/user/me/ [get]
 func (uc *UserController) GetProfile(c *gin.Context) {
 	userData, exists := c.Get(middleware.ContextUserKey)
 

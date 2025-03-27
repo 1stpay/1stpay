@@ -19,6 +19,14 @@ func NewBlockchainController(usecase usecase.BlockchainUsecase) *BlockchainContr
 	}
 }
 
+// ListActive godoc
+// @Summary List active blockchains
+// @Description Retrieve a list of all active blockchains.
+// @Tags Blockchain
+// @Produce json
+// @Success 200 {array} restdto.BlockchainListResponseDTO "List of active blockchains"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /merchant/api/v1/blockchain/list/ [get]
 func (con *BlockchainController) ListActive(c *gin.Context) {
 	blockchainList, err := con.BlockchainUsecase.ListActive()
 	if err != nil {

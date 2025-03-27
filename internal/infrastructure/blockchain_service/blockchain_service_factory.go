@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/1stpay/1stpay/internal/domain/enum"
 	"github.com/1stpay/1stpay/internal/repository"
@@ -29,7 +30,15 @@ func InitBlockchainServices(blockchainRepo repository.BlockchainRepository) (map
 
 		switch bc.ChainType {
 		case enum.EVM:
-			service, err := NewEthereumService(rpcURL)
+			chainId, ok := cfg["chain_id"]
+			if !ok || chainId == "" {
+				return nil, fmt.Errorf("chain id not found or empty for blockchain %s", bc.ID)
+			}
+			chainIdInt, err := strconv.Atoi(chainId)
+			if err != nil {
+				return nil, fmt.Errorf("incorrect chain id for blockchain %s", bc.ID)
+			}
+			service, err := NewEthereumService(rpcURL, chainIdInt)
 			if err != nil {
 				return nil, fmt.Errorf("failed to initialize Ethereum service for blockchain %s: %w", bc.ID, err)
 			}

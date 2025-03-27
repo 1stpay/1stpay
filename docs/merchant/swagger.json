@@ -1,0 +1,859 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/merchant/api/v1/auth/login": {
+            "post": {
+                "description": "Аутентифицирует пользователя и возвращает токен доступа",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Вход пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные для входа",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Возвращает токен доступа",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.AccessTokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные входные данные",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещён",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/auth/register": {
+            "post": {
+                "description": "Registers new user and returns access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User registration",
+                "parameters": [
+                    {
+                        "description": "Registration data",
+                        "name": "register",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Returns success token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.AccessTokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect data",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/blockchain/list/": {
+            "get": {
+                "description": "Retrieve a list of all active blockchains.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blockchain"
+                ],
+                "summary": "List active blockchains",
+                "responses": {
+                    "200": {
+                        "description": "List of active blockchains",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.BlockchainListResponseDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/merchant/": {
+            "post": {
+                "description": "Creates a new merchant using provided data and returns the merchant details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "Create a new merchant",
+                "parameters": [
+                    {
+                        "description": "Merchant creation payload",
+                        "name": "merchant",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Merchant created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or error during creation",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/merchant/me/": {
+            "get": {
+                "description": "Retrieves details of the merchant associated with the current user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "Get merchant details",
+                "responses": {
+                    "200": {
+                        "description": "Merchant details",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantDetailResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Merchant not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates the merchant information for the current user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "Update merchant information",
+                "parameters": [
+                    {
+                        "description": "Merchant update payload",
+                        "name": "merchant",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Merchant updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/merchant/me/api-key/": {
+            "get": {
+                "description": "Retrieves all API keys associated with the current merchant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant",
+                    "APIKey"
+                ],
+                "summary": "List merchant API keys",
+                "responses": {
+                    "200": {
+                        "description": "List of API keys",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantAPIKeyResponseDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Merchant not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Generates and stores a new API key for the current merchant. The raw API key is returned only once.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant",
+                    "APIKey"
+                ],
+                "summary": "Create a new API key for a merchant",
+                "parameters": [
+                    {
+                        "description": "API key creation payload",
+                        "name": "apiKey",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.CreateAPIKeyRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "API key created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.CreateAPIKeyResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/merchant/me/api-key/{id}/": {
+            "post": {
+                "description": "Deactivates a merchant's API key specified by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant",
+                    "APIKey"
+                ],
+                "summary": "Deactivate an API key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API key ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "API key deactivated successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid API key ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error deactivating API key",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/merchant/me/tokens/": {
+            "get": {
+                "description": "Retrieves a list of tokens associated with the current merchant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant",
+                    "Token"
+                ],
+                "summary": "List merchant tokens",
+                "responses": {
+                    "200": {
+                        "description": "List of merchant tokens",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateResponseDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Merchant not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new token for the current merchant.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant",
+                    "Token"
+                ],
+                "summary": "Create a merchant token",
+                "parameters": [
+                    {
+                        "description": "Merchant token creation payload",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or merchant not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/payments/": {
+            "post": {
+                "description": "Creates a new payment with associated wallets for the current merchant.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Create a new payment",
+                "parameters": [
+                    {
+                        "description": "Payment creation payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_common_restdto.PaymentCreateRestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_common_restdto.PaymentCreateResponseRestDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Merchant not found or error during payment creation",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/token/": {
+            "get": {
+                "description": "Retrieves a list of all active tokens.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Token"
+                ],
+                "summary": "List active tokens",
+                "responses": {
+                    "200": {
+                        "description": "List of active tokens",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.TokenListResponseDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/api/v1/user/me/": {
+            "get": {
+                "description": "Retrieves the profile of the authenticated user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user profile",
+                "responses": {
+                    "200": {
+                        "description": "User profile data",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.UserMeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user or invalid user type",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "gin.H": {
+            "type": "object",
+            "additionalProperties": {}
+        },
+        "github_com_1stpay_1stpay_internal_domain_enum.NetworkType": {
+            "type": "string",
+            "enum": [
+                "evm",
+                "tron",
+                "ton",
+                "solana"
+            ],
+            "x-enum-varnames": [
+                "EVM",
+                "TRON",
+                "TON",
+                "SOLANA"
+            ]
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_common_restdto.PaymentCreateResponseRestDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_common_restdto.PaymentCreateRestDTO": {
+            "type": "object",
+            "required": [
+                "requested_amount"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "requested_amount": {
+                    "type": "number"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.AccessTokenResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.BlockchainListResponseDTO": {
+            "type": "object",
+            "properties": {
+                "chain_type": {
+                    "$ref": "#/definitions/github_com_1stpay_1stpay_internal_domain_enum.NetworkType"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "logo": {
+                    "$ref": "#/definitions/null.String"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.CreateAPIKeyRequestDTO": {
+            "type": "object",
+            "properties": {
+                "expires_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.CreateAPIKeyResponseDTO": {
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantAPIKeyResponseDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateRequestDTO": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantCreateResponseDTO": {
+            "type": "object",
+            "properties": {
+                "commision_rate": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantDetailResponseDTO": {
+            "type": "object",
+            "properties": {
+                "commision_rate": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateRequestDTO": {
+            "type": "object",
+            "required": [
+                "active",
+                "token_id"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "token_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.MerchantTokenCreateResponseDTO": {
+            "type": "object",
+            "required": [
+                "active",
+                "created_at",
+                "id",
+                "merchant_id",
+                "token_id"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "token_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.TokenListResponseDTO": {
+            "type": "object",
+            "properties": {
+                "blockchain_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_native": {
+                    "type": "boolean"
+                },
+                "logo": {
+                    "$ref": "#/definitions/null.String"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_1stpay_1stpay_internal_transport_rest_merchant_restdto.UserMeResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "null.String": {
+            "type": "object",
+            "properties": {
+                "string": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if String is not NULL",
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}

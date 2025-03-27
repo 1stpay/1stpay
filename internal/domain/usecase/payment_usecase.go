@@ -29,6 +29,7 @@ type paymentUsecase struct {
 type PaymentUsecase interface {
 	CreatePaymentWithWallets(paymentData restdto.PaymentCreateRestDTO, merchantId uuid.UUID) (model.Payment, error)
 	GetPaymentWithAddresses(paymentID string) (model.Payment, []model.PaymentAddress, error)
+	ConfirmInvoice(inv model.Payment, addr model.PaymentAddress, balance *big.Int) error
 }
 
 func NewPaymentUsecase(
@@ -56,7 +57,7 @@ func (u *paymentUsecase) CreatePaymentWithWallets(paymentData restdto.PaymentCre
 		_ = tx.Rollback()
 	}()
 
-	now := time.Now()
+	now := time.Now().Add(time.Duration(time.Hour))
 	amlStatus := enum.PaymentAMLStatusPending
 	paymentStatus := enum.PaymentStatusPending
 
@@ -144,4 +145,38 @@ func (u *paymentUsecase) GetPaymentWithAddresses(paymentID string) (model.Paymen
 		return model.Payment{}, []model.PaymentAddress{}, err
 	}
 	return payment, paypaymentAddressList, nil
+}
+
+func (u *paymentUsecase) ConfirmInvoice(inv model.Payment, addr model.PaymentAddress, balance *big.Int) error {
+	decimals := addr.Token.Decimals
+	factor := math.Pow10(decimals)
+
+	fBalance := new(big.Float).SetInt(balance)
+	paidAmountFloat, _ := new(big.Float).Quo(fBalance, big.NewFloat(factor)).Float64()
+
+	return u.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&model.PaymentAddress{}).
+			Where("id = ?", addr.ID).
+			Updates(map[string]interface{}{
+				"paid_amount":     paidAmountFloat,
+				"paid_amount_wei": balance.Int64(),
+			}).Error; err != nil {
+			return fmt.Errorf("error updating payment address: %w", err)
+		}
+
+		if err := tx.Model(&model.Payment{}).
+			Where("id = ?", inv.ID).
+			Updates(map[string]interface{}{
+				"status":        enum.PaymentStatusCompleted,
+				"used_token_id": addr.Token.ID,
+			}).Error; err != nil {
+			return fmt.Errorf("error updating payment: %w", err)
+		}
+		if err := tx.Model(&model.MerchantToken{}).
+			Where("merchant_id = ? AND token_id = ?", inv.MerchantID, addr.Token.ID).
+			Update("balance", gorm.Expr("balance + ?", paidAmountFloat)).Error; err != nil {
+			return fmt.Errorf("error updating merchant token balance: %w", err)
+		}
+		return nil
+	})
 }

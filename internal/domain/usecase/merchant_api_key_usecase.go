@@ -30,6 +30,7 @@ func NewMerchantAPIKeyUsecase(repo repository.MerchantRepository) MerchantAPIKey
 	}
 }
 
+// CreateAPIKey creates a new API key for a merchant
 func (u *merchantAPIKeyUsecase) CreateAPIKey(merchantID uuid.UUID, expiresAt *time.Time) (model.MerchantAPIKey, string, error) {
 	rawBytes := make([]byte, 32)
 	if _, err := rand.Read(rawBytes); err != nil {

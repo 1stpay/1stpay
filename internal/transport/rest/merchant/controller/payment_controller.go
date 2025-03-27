@@ -23,6 +23,17 @@ func NewPaymentController(paymentUsecase usecase.PaymentUsecase, merchantUsecase
 	}
 }
 
+// Create godoc
+// @Summary Create a new payment
+// @Description Creates a new payment with associated wallets for the current merchant.
+// @Tags Payment
+// @Accept json
+// @Produce json
+// @Param payload body restdto.PaymentCreateRestDTO true "Payment creation payload"
+// @Success 200 {object} restdto.PaymentCreateResponseRestDTO "Payment created successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 404 {object} map[string]string "Merchant not found or error during payment creation"
+// @Router /merchant/api/v1/payments/ [post]
 func (con *PaymentController) Create(c *gin.Context) {
 	var req restdto.PaymentCreateRestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {

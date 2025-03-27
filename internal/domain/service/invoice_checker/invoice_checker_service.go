@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math"
 	"math/big"
 	"time"
 
+	"github.com/1stpay/1stpay/internal/domain/enum"
+	"github.com/1stpay/1stpay/internal/domain/usecase"
 	"github.com/1stpay/1stpay/internal/infrastructure/blockchain_service"
 	"github.com/1stpay/1stpay/internal/model"
 	"github.com/1stpay/1stpay/internal/repository"
@@ -18,11 +19,13 @@ type InvoiceChecker interface {
 	Start(ctx context.Context) error
 	CheckInvoices(ctx context.Context) error
 	CheckInvoiceReceipt() error
+	CheckExpiredPayments(ctx context.Context) error
 }
 
 type invoiceChecker struct {
 	paymentRepo        repository.PaymentRepository
 	paymentAddressRepo repository.PaymentAddressRepository
+	paymentUsecase     usecase.PaymentUsecase
 	db                 *gorm.DB
 	blockchainServices map[string]blockchain_service.BlockchainService
 	pollInterval       time.Duration
@@ -47,6 +50,8 @@ func NewInvoiceChecker(
 func (ic *invoiceChecker) Start(ctx context.Context) error {
 	ticker := time.NewTicker(ic.pollInterval)
 	defer ticker.Stop()
+	expiredTicker := time.NewTicker(ic.pollInterval)
+	defer expiredTicker.Stop()
 
 	for {
 		select {
@@ -55,6 +60,10 @@ func (ic *invoiceChecker) Start(ctx context.Context) error {
 		case <-ticker.C:
 			if err := ic.CheckInvoices(ctx); err != nil {
 				log.Printf("Invoice check error: %v", err)
+			}
+		case <-expiredTicker.C:
+			if err := ic.CheckExpiredPayments(ctx); err != nil {
+				log.Printf("Expired payment check error: %v", err)
 			}
 		}
 	}
@@ -66,19 +75,14 @@ func (ic *invoiceChecker) CheckInvoiceReceipt() error {
 
 func (ic *invoiceChecker) CheckInvoices(ctx context.Context) error {
 	fmt.Println("Starting invoice check...")
-
-	var activeInvoices []model.Payment
-	if err := ic.db.Where("status = ?", "pending").Find(&activeInvoices).Error; err != nil {
+	activeInvoices, err := ic.paymentRepo.GetPaymentListWithStatus(enum.PaymentStatusPending)
+	if err != nil {
 		return err
 	}
 
 	for _, inv := range activeInvoices {
-		var addresses []model.PaymentAddress
-		if err := ic.db.
-			Where("payment_id = ?", inv.ID).
-			Preload("Token").
-			Preload("Token.Blockchain").
-			Find(&addresses).Error; err != nil {
+		addresses, err := ic.paymentAddressRepo.ListByPaymentId(inv.ID)
+		if err != nil {
 			log.Printf("Error retrieving addresses for invoice %s: %v", inv.ID, err)
 			continue
 		}
@@ -95,13 +99,13 @@ func (ic *invoiceChecker) CheckInvoices(ctx context.Context) error {
 			var err error
 
 			if addr.Token.IsNative {
-				balance, err = service.GetNativeBalance(addr.PublicKey)
+				balance, err = service.GetNativeBalance(ctx, addr.PublicKey)
 			} else {
 				if addr.Token.ContractAddress == "" {
 					log.Printf("Token %s is non-native but ContractAddress is empty", addr.Token.Symbol)
 					continue
 				}
-				balance, err = service.GetTokenBalance(addr.PublicKey, addr.Token.ContractAddress)
+				balance, err = service.GetTokenBalance(ctx, addr.PublicKey, addr.Token.ContractAddress)
 			}
 			if err != nil {
 				log.Printf("Error getting balance for address %s on blockchain %s: %v", addr.PublicKey, bcID, err)
@@ -110,34 +114,13 @@ func (ic *invoiceChecker) CheckInvoices(ctx context.Context) error {
 
 			reqAmount := big.NewInt(int64(addr.RequestedAmountWei))
 			if balance.Cmp(reqAmount) >= 0 {
-				decimals := addr.Token.Decimals
-				factor := math.Pow10(decimals)
+				if err := ic.paymentUsecase.ConfirmInvoice(inv, addr, balance); err != nil {
+					log.Printf("Error confirming invoice %s: %v", inv.ID, err)
+					continue
+				}
+				log.Printf("Invoice %s confirmed. Address %s balance (%s minimal units) >= requested (%s minimal units).",
+					inv.ID, addr.PublicKey, balance.String(), reqAmount.String())
 
-				fBalance := new(big.Float).SetInt(balance)
-				fmt.Println(fBalance)
-				paidAmountFloat, _ := new(big.Float).Quo(fBalance, big.NewFloat(factor)).Float64()
-
-				// if err := ic.db.Model(&model.PaymentAddress{}).
-				// 	Where("id = ?", addr.ID).
-				// 	Updates(map[string]interface{}{
-				// 		"paid_amount":     paidAmountFloat,
-				// 		"paid_amount_wei": balance.Int64(),
-				// 	}).Error; err != nil {
-				// 	log.Printf("Error updating PaymentAddress %s: %v", addr.ID, err)
-				// 	continue
-				// }
-
-				// if err := ic.db.Model(&model.Payment{}).
-				// 	Where("id = ?", inv.ID).
-				// 	Updates(map[string]interface{}{
-				// 		"status":        enum.PaymentStatusCompleted,
-				// 		"used_token_id": addr.Token.ID,
-				// 	}).Error; err != nil {
-				// 	log.Printf("Error updating Payment %s: %v", inv.ID, err)
-				// } else {
-				log.Printf("Invoice %s confirmed. Address %s balance (%s minimal units) >= requested (%s minimal units). Converted value: %f",
-					inv.ID, addr.PublicKey, balance.String(), reqAmount.String(), paidAmountFloat)
-				// }
 				break
 			} else {
 				log.Printf("Invoice %s, address %s: balance (%s minimal units) is less than requested (%s minimal units)",
@@ -146,5 +129,18 @@ func (ic *invoiceChecker) CheckInvoices(ctx context.Context) error {
 		}
 	}
 
+	return nil
+}
+
+func (ic *invoiceChecker) CheckExpiredPayments(ctx context.Context) error {
+	fmt.Println("payment cancel")
+	now := time.Now()
+	result := ic.db.Model(&model.Payment{}).
+		Where("expires_at IS NOT NULL AND expires_at < ? AND status = ?", now, "pending").
+		Update("status", enum.PaymentStatusFailed)
+	if result.Error != nil {
+		return result.Error
+	}
+	log.Printf("%d expired payments cancelled", result.RowsAffected)
 	return nil
 }

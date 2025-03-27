@@ -21,6 +21,7 @@ type IntegrationTest struct {
 	TestFactory *factory.TestFactory
 	Repos       *config.Repos
 	Usecases    *config.Usecases
+	Deps        *config.Dependencies
 }
 
 func NewIntegrationTest(t *testing.T, rootPath string) *IntegrationTest {
@@ -41,7 +42,6 @@ func NewIntegrationTest(t *testing.T, rootPath string) *IntegrationTest {
 		}
 	})
 	testFactory := factory.NewTestFactory(database.GormDB, deps)
-
 	return &IntegrationTest{
 		Database:    database,
 		Context:     ctx,
@@ -49,5 +49,6 @@ func NewIntegrationTest(t *testing.T, rootPath string) *IntegrationTest {
 		GinEngine:   ginEngine,
 		TestFactory: testFactory,
 		Repos:       deps.Repos,
+		Deps:        deps,
 	}
 }
