@@ -1,0 +1,1075 @@
+openapi: 3.0.3
+info:
+  title: 1stPay API
+  description: |
+    1stPay is a comprehensive cryptocurrency payments service that provides APIs for payment processing, 
+    merchant management, and multi-blockchain support.
+    
+    ## Features
+    - Multi-blockchain support (EVM, Tron, TON, Solana)
+    - Payment acceptance and processing
+    - Merchant management
+    - Token configuration
+    - Real-time payment tracking
+    - AML integration
+    
+  version: 1.0.0
+  contact:
+    name: 1stPay API Support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://api.1stpay.com
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique user identifier
+        created_at:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        email:
+          type: string
+          format: email
+          description: User email (unique)
+        role:
+          type: string
+          description: User role
+      required:
+        - id
+        - created_at
+        - updated_at
+        - email
+        - role
+
+    Merchant:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique merchant identifier
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        user_id:
+          type: string
+          format: uuid
+          description: Associated user ID
+        name:
+          type: string
+          description: Merchant name
+        commission_rate:
+          type: number
+          format: float
+          description: Commission rate (0-100)
+      required:
+        - id
+        - created_at
+        - updated_at
+        - user_id
+        - name
+        - commission_rate
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique payment identifier
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        merchant_id:
+          type: string
+          format: uuid
+          description: Associated merchant ID
+        requested_amount:
+          type: number
+          format: float
+          description: Amount requested
+        paid_amount:
+          type: number
+          format: float
+          description: Amount actually paid
+        commission_amount:
+          type: number
+          format: float
+          description: Commission charged
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Payment expiration (optional)
+        aml_status:
+          $ref: '#/components/schemas/PaymentAMLStatus'
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        invoice_email:
+          type: string
+          format: email
+          nullable: true
+          description: Invoice email (optional)
+        used_token_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Token used for payment (optional)
+      required:
+        - id
+        - created_at
+        - updated_at
+        - merchant_id
+        - requested_amount
+        - paid_amount
+        - commission_amount
+        - status
+
+    Token:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique token identifier
+        name:
+          type: string
+          description: Token name
+        symbol:
+          type: string
+          description: Token symbol (e.g., "ETH", "BTC")
+        contract_address:
+          type: string
+          description: Smart contract address
+        decimals:
+          type: integer
+          description: Token decimal places
+        logo:
+          type: string
+          nullable: true
+          description: Logo URL (optional)
+        blockchain_id:
+          type: string
+          format: uuid
+          description: Associated blockchain ID
+        is_native:
+          type: boolean
+          description: Whether token is native to blockchain
+        is_active:
+          type: boolean
+          description: Whether token is active
+        config:
+          type: object
+          description: Additional configuration
+      required:
+        - id
+        - name
+        - symbol
+        - contract_address
+        - decimals
+        - blockchain_id
+        - is_native
+        - is_active
+
+    Blockchain:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique blockchain identifier
+        name:
+          type: string
+          description: Blockchain name
+        logo:
+          type: string
+          nullable: true
+          description: Logo URL (optional)
+        is_active:
+          type: boolean
+          description: Whether blockchain is active
+        chain_type:
+          $ref: '#/components/schemas/NetworkType'
+        config:
+          type: object
+          description: Additional configuration
+      required:
+        - id
+        - name
+        - is_active
+        - chain_type
+
+    MerchantToken:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier
+        merchant_id:
+          type: string
+          format: uuid
+          description: Associated merchant ID
+        token_id:
+          type: string
+          format: uuid
+          description: Associated token ID
+        balance:
+          type: number
+          format: float
+          description: Current balance
+        active:
+          type: boolean
+          description: Whether token is active for merchant
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+      required:
+        - id
+        - merchant_id
+        - token_id
+        - balance
+        - active
+        - created_at
+
+    PaymentStatus:
+      type: string
+      enum:
+        - pending
+        - completed
+        - failed
+        - not_filled
+      description: |
+        Payment status:
+        - `pending`: Payment is pending
+        - `completed`: Payment completed successfully
+        - `failed`: Payment failed
+        - `not_filled`: Payment not filled within time limit
+
+    PaymentAMLStatus:
+      type: string
+      enum:
+        - passed
+        - failed
+        - pending
+      description: |
+        AML check status:
+        - `passed`: AML check passed
+        - `failed`: AML check failed
+        - `pending`: AML check in progress
+
+    NetworkType:
+      type: string
+      enum:
+        - evm
+        - tron
+        - ton
+        - solana
+      description: |
+        Blockchain network type:
+        - `evm`: Ethereum Virtual Machine compatible
+        - `tron`: Tron network
+        - `ton`: TON network
+        - `solana`: Solana network
+
+    # Request/Response DTOs
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        password:
+          type: string
+          description: User password
+      required:
+        - email
+        - password
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        password:
+          type: string
+          description: User password
+      required:
+        - email
+        - password
+
+    AccessTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: JWT access token
+      required:
+        - access_token
+
+    MerchantCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Merchant name
+      required:
+        - name
+
+    MerchantTokenCreateRequest:
+      type: object
+      properties:
+        token_id:
+          type: string
+          format: uuid
+          description: Token ID to add
+        active:
+          type: boolean
+          description: Whether token should be active
+      required:
+        - token_id
+        - active
+
+    PaymentCreateRequest:
+      type: object
+      properties:
+        requested_amount:
+          type: number
+          format: float
+          description: Amount to request
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Customer email for invoice
+      required:
+        - requested_amount
+
+    PaymentCreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Payment ID
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - id
+        - created_at
+        - updated_at
+
+    PaymentDetailResponse:
+      type: object
+      properties:
+        requested_amount:
+          type: number
+          format: float
+          description: Requested payment amount
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Customer email
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Payment expiration time
+        merchant:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Merchant name
+          required:
+            - name
+        payment_address_list:
+          type: array
+          items:
+            type: object
+            properties:
+              public_key:
+                type: string
+                description: Wallet public key for payment
+              requested_amount:
+                type: string
+                description: Formatted requested amount
+              token:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Token name
+                  symbol:
+                    type: string
+                    description: Token symbol
+                  logo:
+                    type: string
+                    nullable: true
+                    description: Token logo URL
+                  blockchain:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Blockchain name
+                      logo:
+                        type: string
+                        nullable: true
+                        description: Blockchain logo URL
+                    required:
+                      - name
+                required:
+                  - name
+                  - symbol
+                  - blockchain
+            required:
+              - public_key
+              - requested_amount
+              - token
+      required:
+        - requested_amount
+        - merchant
+        - payment_address_list
+
+    UserProfileResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID
+        email:
+          type: string
+          format: email
+          description: User email
+      required:
+        - id
+        - email
+
+    BlockchainListResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+            description: Blockchain ID
+          name:
+            type: string
+            description: Blockchain name
+          logo:
+            type: string
+            nullable: true
+            description: Blockchain logo URL
+          is_active:
+            type: boolean
+            description: Whether blockchain is active
+          chain_type:
+            $ref: '#/components/schemas/NetworkType'
+        required:
+          - id
+          - name
+          - is_active
+          - chain_type
+
+    TokenListResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+            description: Token ID
+          name:
+            type: string
+            description: Token name
+          symbol:
+            type: string
+            description: Token symbol
+          blockchain_id:
+            type: string
+            format: uuid
+            description: Associated blockchain ID
+          logo:
+            type: string
+            nullable: true
+            description: Token logo URL
+          is_native:
+            type: boolean
+            description: Whether token is native to blockchain
+          is_active:
+            type: boolean
+            description: Whether token is active
+        required:
+          - id
+          - name
+          - symbol
+          - blockchain_id
+          - is_native
+          - is_active
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error description
+      required:
+        - error
+
+paths:
+  # Merchant API
+  /merchant/api/v1/auth/register/:
+    post:
+      tags:
+        - Merchant Authentication
+      summary: Register new user
+      description: Register a new user account for merchant access
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              email: "merchant@example.com"
+              password: "securepassword123"
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
+              example:
+                access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid input data"
+
+  /merchant/api/v1/auth/login/:
+    post:
+      tags:
+        - Merchant Authentication
+      summary: Login user
+      description: Authenticate an existing user and receive access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: "merchant@example.com"
+              password: "securepassword123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
+              example:
+                access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '403':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid credentials"
+
+  /merchant/api/v1/user/me/:
+    get:
+      tags:
+        - Merchant User Management
+      summary: Get user profile
+      description: Get current user profile information
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                email: "merchant@example.com"
+        '400':
+          description: Invalid user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /merchant/api/v1/merchant/:
+    post:
+      tags:
+        - Merchant Management
+      summary: Create merchant
+      description: Create a new merchant account for the authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantCreateRequest'
+            example:
+              name: "My Crypto Store"
+      responses:
+        '201':
+          description: Merchant created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Merchant'
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+                user_id: "987fcdeb-51a2-43d1-9c45-123456789abc"
+                name: "My Crypto Store"
+                commission_rate: 0.0
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /merchant/api/v1/merchant/me/:
+    get:
+      tags:
+        - Merchant Management
+      summary: Get merchant details
+      description: Get current merchant details
+      responses:
+        '200':
+          description: Merchant details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Merchant'
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+                user_id: "987fcdeb-51a2-43d1-9c45-123456789abc"
+                name: "My Crypto Store"
+                commission_rate: 2.5
+        '404':
+          description: Merchant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Merchant not found"
+    put:
+      tags:
+        - Merchant Management
+      summary: Update merchant
+      description: Update current merchant information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantCreateRequest'
+            example:
+              name: "Updated Store Name"
+      responses:
+        '200':
+          description: Merchant updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Merchant'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /merchant/api/v1/merchant/me/tokens/:
+    get:
+      tags:
+        - Merchant Token Management
+      summary: Get merchant tokens
+      description: Get list of tokens configured for the merchant
+      responses:
+        '200':
+          description: Merchant tokens retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MerchantToken'
+              example:
+                - id: "123e4567-e89b-12d3-a456-426614174000"
+                  merchant_id: "987fcdeb-51a2-43d1-9c45-123456789abc"
+                  token_id: "456e7890-e89b-12d3-a456-426614174111"
+                  active: true
+                  created_at: "2024-01-15T10:30:00Z"
+        '404':
+          description: Merchant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Merchant Token Management
+      summary: Add merchant token
+      description: Add a new token to the merchant's accepted tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantTokenCreateRequest'
+            example:
+              token_id: "456e7890-e89b-12d3-a456-426614174111"
+              active: true
+      responses:
+        '200':
+          description: Token added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantToken'
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                merchant_id: "987fcdeb-51a2-43d1-9c45-123456789abc"
+                token_id: "456e7890-e89b-12d3-a456-426614174111"
+                active: true
+                created_at: "2024-01-15T10:30:00Z"
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /merchant/api/v1/payment/:
+    post:
+      tags:
+        - Merchant Payment Management
+      summary: Create payment
+      description: Create a new payment invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateRequest'
+            example:
+              requested_amount: 100.50
+              email: "customer@example.com"
+      responses:
+        '200':
+          description: Payment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCreateResponse'
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        '404':
+          description: Error creating payment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /merchant/api/v1/blockchain/list/:
+    get:
+      tags:
+        - Reference Data
+      summary: List blockchains
+      description: Get list of active blockchain networks
+      security: []
+      responses:
+        '200':
+          description: Blockchains retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockchainListResponse'
+              example:
+                - id: "123e4567-e89b-12d3-a456-426614174000"
+                  name: "Ethereum"
+                  logo: "https://example.com/eth-logo.png"
+                  is_active: true
+                  chain_type: "evm"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /merchant/api/v1/token/list/:
+    get:
+      tags:
+        - Reference Data
+      summary: List tokens
+      description: Get list of active tokens
+      security: []
+      responses:
+        '200':
+          description: Tokens retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenListResponse'
+              example:
+                - id: "123e4567-e89b-12d3-a456-426614174000"
+                  name: "Ethereum"
+                  symbol: "ETH"
+                  blockchain_id: "456e7890-e89b-12d3-a456-426614174111"
+                  logo: "https://example.com/eth-logo.png"
+                  is_native: true
+                  is_active: true
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /merchant/api/v1/ping:
+    get:
+      tags:
+        - Health Check
+      summary: Health check
+      description: Health check endpoint
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "pong"
+
+  # Frontend API
+  /frontend/api/v1/payment/{id}/:
+    get:
+      tags:
+        - Frontend Payment
+      summary: Get payment details
+      description: Get detailed payment information for customer payment interface
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Payment UUID
+      responses:
+        '200':
+          description: Payment details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetailResponse'
+              example:
+                requested_amount: 100.50
+                email: "customer@example.com"
+                expires_at: "2024-01-15T11:30:00Z"
+                merchant:
+                  name: "My Crypto Store"
+                payment_address_list:
+                  - public_key: "0x742d35Cc6634C0532925a3b8D4e7B4B9C664E4b1"
+                    requested_amount: "100.50000000"
+                    token:
+                      name: "Ethereum"
+                      symbol: "ETH"
+                      logo: "https://example.com/eth-logo.png"
+                      blockchain:
+                        name: "Ethereum"
+                        logo: "https://example.com/eth-logo.png"
+        '404':
+          description: Payment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Error"
+
+  /frontend/api/v1/ping:
+    get:
+      tags:
+        - Health Check
+      summary: Frontend health check
+      description: Health check endpoint for frontend API
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "pong"
+
+  # Integration API
+  /integration/api/v1/payment/:
+    post:
+      tags:
+        - Integration Payment
+      summary: Create payment (Integration)
+      description: Create a payment invoice via integration API
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateRequest'
+      responses:
+        '200':
+          description: Payment created (placeholder response)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "pong"
+    get:
+      tags:
+        - Integration Payment
+      summary: Get payments (Integration)
+      description: Get payment information via integration API
+      security: []
+      responses:
+        '200':
+          description: Payments retrieved (placeholder response)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "pong"
+
+  /integration/api/v1/payment/{id}/:
+    get:
+      tags:
+        - Integration Payment
+      summary: Get payment details (Integration)
+      description: Get specific payment details via integration API
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Payment UUID
+      responses:
+        '200':
+          description: Payment details retrieved (placeholder response)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "pong"
+
+tags:
+  - name: Merchant Authentication
+    description: Authentication endpoints for merchant API
+  - name: Merchant User Management
+    description: User profile management for merchants
+  - name: Merchant Management
+    description: Merchant account management
+  - name: Merchant Token Management
+    description: Token configuration for merchants
+  - name: Merchant Payment Management
+    description: Payment creation and management for merchants
+  - name: Frontend Payment
+    description: Customer-facing payment endpoints
+  - name: Integration Payment
+    description: External system payment integration
+  - name: Reference Data
+    description: Blockchain and token reference data
+  - name: Health Check
+    description: Service health monitoring
